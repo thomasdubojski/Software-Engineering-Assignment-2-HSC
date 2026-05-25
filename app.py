@@ -1,13 +1,14 @@
 # importing required add-ons
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory
+from flask import session
+from flask import flash
+from flask import abort
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import session
-from sqlalchemy import CheckConstraint
-from flask import flash
 import secrets
-from flask import abort
 import os
 
 # creating engine for site
@@ -22,24 +23,24 @@ db= SQLAlchemy(app)
 # creating db schema
 # users table
 class User(db.Model):
-    userId = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    passwordHash = db.Column(db.String(255), nullable=False)
-    createdAt = db.Column(db.Date, default=datetime.utcnow)
+    passwordhash = db.Column(db.String(255), nullable=False)
+    created = db.Column(db.Date, default=datetime.utcnow)
 
     assignments = db.relationship("Assignments", backref='student', lazy=True)
 
-# reviews table
+# assignments table
 class Assignments(db.Model):
-    assignmentId = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer, db.ForeignKey('user.userId'), nullable=False)
-    assignmentType = db.Column(db.String(100), nullable=True, index=True)
-    courseName = db.Column(db.String(100), nullable=False, index=True)
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    type = db.Column(db.String(100), nullable=True, index=True)
+    course = db.Column(db.String(100), nullable=False, index=True)
     priority = db.Column(db.Integer, nullable=False)
     notes = db.Column(db.Text, nullable=True)
-    dueDate = db.Column(db.Date, nullable=True)
-    createdAt = db.Column(db.Date, default=datetime.utcnow)
+    due = db.Column(db.Date, nullable=True)
+    created = db.Column(db.Date, default=datetime.utcnow)
 
 @app.route('/')
 def home():
@@ -60,8 +61,8 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     # authenticating user
-    if user and check_password_hash(user.passwordHash, password):
-        session['user_id'] = user.userId
+    if user and check_password_hash(user.passwordhash, password):
+        session['user_id'] = user.user_id
         session['username'] = user.username
 
         return redirect(url_for('home'))
@@ -85,14 +86,13 @@ def create_account():
     username = request.form['username']
     email = request.form['email']
     password = request.form['password']
-    creationDate = datetime.now().strftime('%Y-%m-%d')
+
     hashedPassword = generate_password_hash(password)
 
-    # adding new user to db
     new_user = User(
         username=username,
         email=email,
-        passwordHash=hashedPassword
+        passwordhash=hashedPassword
     )
 
     db.session.add(new_user)
@@ -100,7 +100,7 @@ def create_account():
     
     return redirect(url_for('home'))
 
-# defining review page route
+# defining add assignment page route
 @app.route('/add-assignment', methods=['GET'])
 def show_form_add_assignment():
     return render_template('add-assignment.html')
@@ -111,25 +111,24 @@ def add_assignment():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignmentName = request.form.get('name', '').strip()
+    assignmentName = request.form.get('assignment_type', '').strip()
     courseName = request.form.get('course', '').strip()
     priority = request.form.get('priority', '').strip()
-    notes = request.form.get('notes', '').strip()
+    notes = request.form.get('assignmentNotes', '').strip()
     dueDate = request.form.get('due_date', '').strip()
 
     # required fields validation
-    if not assignmentName or not courseName or not priority:
+    if not assignmentName or not courseName or not priority or not dueDate:
         flash("Missing Required Fields.", "error")
-
         return redirect(url_for('show_form_add_assignment'))
 
     new_assignment = Assignments(
         user_id=session['user_id'],
-        assignment_name=assignmentName,
-        course_name=courseName,
-        priority=priority,
+        type=assignmentName,
+        course=courseName,
+        priority=int(priority),
         notes=notes,
-        due_date=dueDate
+        due=datetime.strptime(dueDate, "%Y-%m-%d").date()
     )
 
     db.session.add(new_assignment)

@@ -7,12 +7,13 @@
 {% block text %}{% endblock %}
 
 {% block content %}
-<form action="/add-assignment" method="POST">
+<form id="assignment-form" action="/add-assignment" method="POST">
 
     <!-- Assignment type dropdown -->
     <label for="assignment_type">Assignment Type:</label>
     <select name="assignment_type" id="assignment_type" required>
-        <option value="">Select an assignment type</option>
+        <option class="heading-option" value="">Select an assignment type</option>
+
         <option value="Take Home Assignment - Essay/Paper">Take Home Assignment - Essay/Paper</option>
         <option value="Take Home Assignment - Presentation/Speech">Take Home Assignment - Presentation/Speech</option>
         <option value="Take Home Assignment - Practical">Take Home Assignment - Practical</option>
@@ -32,9 +33,10 @@
     <!-- Course Dropdown -->
     <label for="course">Course:</label>
     <select name="course" id="course" required>
-        <option value="">Select an course</option>
+        <option class="heading-option" value="">Select a course</option>
+
         <!-- ENGLISH -->
-        <option value="">English Courses</option>
+        <option disabled>English Courses</option>
         <option value="Advanced English">Advanced English</option>
         <option value="Standard English">Standard English</option>
         <option value="English Studies">English Studies</option>
@@ -42,22 +44,22 @@
         <option value="English Ext 2">English Ext 2</option>
 
         <!-- MATHEMATICS -->
-        <option value="">Mathematics Courses</option>
+        <option disabled>Mathematics Courses</option>
         <option value="Mathematics Advanced">Mathematics Advanced</option>
         <option value="Mathematics Standard">Mathematics Standard</option>
         <option value="Mathematics Ext 1">Mathematics Ext 1</option>
         <option value="Mathematics Ext 2">Mathematics Ext 2</option>
 
         <!-- SCIENCE -->
-        <option value="">Science Courses</option>
+        <option disabled>Science Courses</option>
         <option value="Biology">Biology</option>
         <option value="Chemistry">Chemistry</option>
         <option value="Earth & Environmental Science">Earth & Environmental Science</option>
         <option value="Investigating Science">Investigating Science</option>
         <option value="Physics">Physics</option>
 
-        <!-- HSIE (Human Society & Its Environment) -->
-        <option value="">HSIE Courses</option>
+        <!-- HSIE -->
+        <option disabled>HSIE Courses</option>
         <option value="Aboriginal Studies">Aboriginal Studies</option>
         <option value="Aboriginal Studies Dist Ed">Aboriginal Studies Dist Ed</option>
         <option value="Ancient History">Ancient History</option>
@@ -70,8 +72,8 @@
         <option value="Modern History">Modern History</option>
         <option value="Society & Culture">Society & Culture</option>
 
-        <!-- TAS (Technological and Applied Studies) -->
-        <option value="">TAS Courses</option>
+        <!-- TAS -->
+        <option disabled>TAS Courses</option>
         <option value="Agriculture">Agriculture</option>
         <option value="Design & Technology">Design & Technology</option>
         <option value="Hospitality">Hospitality</option>
@@ -80,8 +82,8 @@
         <option value="Software Engineering">Software Engineering</option>
         <option value="Textiles and Design">Textiles and Design</option>
 
-        <!-- CAPA (Creative Arts) -->
-        <option value="">CAPA Courses</option>
+        <!-- CAPA -->
+        <option disabled>CAPA Courses</option>
         <option value="Drama">Drama</option>
         <option value="Entertainment">Entertainment</option>
         <option value="Entertainment via Dist Ed">Entertainment via Dist Ed</option>
@@ -90,19 +92,19 @@
         <option value="Visual Arts">Visual Arts</option>
 
         <!-- PDHPE -->
-        <option value="">PDHPE Courses</option>
+        <option disabled>PDHPE Courses</option>
         <option value="CAFS">CAFS</option>
         <option value="Health & Movement Science">Health & Movement Science</option>
         <option value="SLR">SLR</option>
         <option value="Exploring Early Childhood">Exploring Early Childhood</option>
 
         <!-- Languages -->
-        <option value="">Language Courses</option>
+        <option disabled>Language Courses</option>
         <option value="German Beginners Dist Ed">German Beginners Dist Ed</option>
         <option value="Japanese Continuers">Japanese Continuers</option>
 
         <!-- OTHER -->
-        <option value="">Other Courses</option>
+        <option disabled>Other Courses</option>
         <option value="Work Studies">Work Studies</option>
         <option value="Other">Other</option>
 
@@ -112,7 +114,8 @@
     <!-- Priority -->
     <label>Priority:</label>
     <select name="priority" id="priority" required>
-        <option value="">Select a priority</option>
+        <option class="heading-option" value="">Select a priority</option>
+
         <option value="5">5 (Highest)</option>
         <option value="4">4</option>
         <option value="3">3</option>
@@ -142,7 +145,7 @@
     >
     <br><br>
 
-    <input type="submit" value="Submit Review">
+    <input type="submit" value="Add Assignment">
 </form>
 
 <script>
@@ -156,7 +159,7 @@ function updateCounter() {
     counter.style.color = length >= max ? "red" : "black";
 }
 
-document.querySelector("form").addEventListener("submit", function (e) {
+document.getElementById("assignment-form").addEventListener("submit", function (e) {
     const text = document.getElementById("assignmentNotes").value.trim();
     if (text.length > 500) {
         alert("Assignment notes must be at most 500 characters long.");

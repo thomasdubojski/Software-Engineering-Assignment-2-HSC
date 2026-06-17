@@ -110,4 +110,69 @@ td {
   margin-top: 20px;
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999; /* IMPORTANT FIX */
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 350px;
+  position: relative;
+  z-index: 10000;
+}
+
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 22px;
+}
+
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn,
+.complete-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: Trebuchet, sans-serif;
+  color: white;
+}
+
+/* separate styling (your old bug was here) */
+
+.edit-btn {
+  background: #3498db;
+}
+
+.complete-btn {
+  background: #2ecc71;
+}
+
+
+#calendar {
+  position: relative;
+  z-index: 1;
 }

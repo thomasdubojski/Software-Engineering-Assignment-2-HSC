@@ -41,6 +41,23 @@ class Assignments(db.Model):
     notes = db.Column(db.Text, nullable=True)
     due = db.Column(db.Date, nullable=True)
     created = db.Column(db.Date, default=datetime.utcnow)
+    completed = db.Column(db.Boolean, default=False)
+
+#Priority calculation function
+def calculate_priority(due_date):
+    today = datetime.utcnow().date()
+    days_left = (due_date - today).days
+
+    if days_left <= 1:
+        return 5  # Critical
+    elif days_left <= 3:
+        return 4  # High
+    elif days_left <= 7:
+        return 3  # Medium
+    elif days_left <= 14:
+        return 2  # Low
+    else:
+        return 1  # Very Low
 
 @app.route('/')
 def home():
@@ -113,22 +130,27 @@ def add_assignment():
 
     assignmentName = request.form.get('assignment_type', '').strip()
     courseName = request.form.get('course', '').strip()
-    priority = request.form.get('priority', '').strip()
     notes = request.form.get('assignmentNotes', '').strip()
     dueDate = request.form.get('due_date', '').strip()
 
-    # required fields validation
-    if not assignmentName or not courseName or not priority or not dueDate:
+    # required fields validation (REMOVED priority check)
+    if not assignmentName or not courseName or not dueDate:
         flash("Missing Required Fields.", "error")
         return redirect(url_for('show_form_add_assignment'))
+
+    # convert date
+    due_date_obj = datetime.strptime(dueDate, "%Y-%m-%d").date()
+
+    # AUTO PRIORITY CALCULATION
+    priority_value = calculate_priority(due_date_obj)
 
     new_assignment = Assignments(
         user_id=session['user_id'],
         type=assignmentName,
         course=courseName,
-        priority=int(priority),
+        priority=priority_value,
         notes=notes,
-        due=datetime.strptime(dueDate, "%Y-%m-%d").date()
+        due=due_date_obj
     )
 
     db.session.add(new_assignment)
@@ -158,6 +180,17 @@ def assignment_calendar():
     ]
 
     return render_template("calendar.html", assignments=data)
+
+@app.route('/complete-assignment/<int:id>', methods=['POST'])
+def complete_assignment(id):
+
+    assignment = Assignments.query.get_or_404(id)
+
+    assignment.completed = True
+
+    db.session.commit()
+
+    return jsonify({"success": True})
 
 if __name__ == "__main__":
     with app.app_context():

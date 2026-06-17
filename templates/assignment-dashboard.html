@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+  const assignments = JSON.parse(`{{ assignments | tojson | safe }}`);
+  window.assignments = assignments;
+</script>
+
+<h1 class="page-title">Assignment Dashboard</h1>
+
+<div id="dashboard" class="dashboard-grid"></div>
+
+<!-- Modal -->
+{% include "components/assignment-modal.html" %}
+
+{% endblock %}

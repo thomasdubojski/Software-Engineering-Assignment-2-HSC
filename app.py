@@ -181,6 +181,31 @@ def assignment_calendar():
 
     return render_template("calendar.html", assignments=data)
 
+@app.route("/assignment-dashboard")
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    assignments = Assignments.query.filter_by(
+        user_id=session['user_id']
+    ).all()
+
+    data = [
+        {
+            "id": a.id,
+            "title": a.course + " Assignment",          
+            "subject": a.course,          
+            "type": a.type,
+            "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+            "priority": a.priority,
+            "notes": a.notes or "",
+            "overdue": a.due < datetime.utcnow().date() if a.due else False
+        }
+        for a in assignments
+    ]
+
+    return render_template("assignment-dashboard.html", assignments=data)
+
 @app.route('/complete-assignment/<int:id>', methods=['POST'])
 def complete_assignment(id):
 

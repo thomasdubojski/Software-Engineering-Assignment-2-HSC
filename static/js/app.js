@@ -49,6 +49,45 @@ function openModal(a) {
 
     modal.classList.remove("hidden");
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const dashboard = document.getElementById("dashboard");
+    const modal = document.getElementById("modal");
+
+    const assignments = window.assignments || [];
+
+    function renderCards() {
+
+        if (!dashboard) return;
+
+        dashboard.innerHTML = "";
+
+        assignments.forEach(a => {
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            card.innerHTML = `
+                <h3>${a.title}</h3>
+
+                <p><strong>Subject:</strong> ${a.subject}</p>
+
+                <p><strong>Due:</strong> ${a.dueDate}</p>
+
+                <span class="priority-bubble ${getPriorityClass(a.priority)}">
+                    ${getPriorityLabel(a.priority)}
+                </span>
+
+                ${a.overdue ? `<span class="overdue-bubble">⚠ OVERDUE</span>` : ""}
+            `;
+
+            card.onclick = () => openModal(a);
+
+            dashboard.appendChild(card);
+        });
+    }
+
     const closeBtn = document.getElementById("closeBtn");
 
     if (closeBtn && modal) {

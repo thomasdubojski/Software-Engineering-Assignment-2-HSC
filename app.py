@@ -137,7 +137,29 @@ def add_assignment():
     flash("Assignment added successfully!", "success")
     return redirect(url_for('home'))
 
+@app.route('/calendar')
+def assignment_calendar():
+    assignments = Assignments.query.filter_by(
+        user_id=session['user_id']
+    ).all()
+
+    data = [
+    {
+        "id": a.id,
+        "title": a.course,
+        "subject": a.course,
+        "type": a.type,
+        "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+        "priority": a.priority,
+        "notes": a.notes,
+        "overdue": a.due < datetime.utcnow().date() if a.due else False
+    }
+    for a in assignments
+    ]
+
+    return render_template("calendar.html", assignments=data)
+
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()   # Creates tables if they don’t exist
+        db.create_all()   # Creates tables if they don't exist
     app.run(debug=True)

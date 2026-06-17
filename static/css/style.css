@@ -1,3 +1,7 @@
+/* =========================
+   TABLE
+========================= */
+
 table, th, tr, td {
   border: 1px solid;
   border-collapse: collapse;
@@ -7,81 +11,103 @@ td {
   text-align: center;
 }
 
+/* =========================
+   GENERAL
+========================= */
+
 .center-text {
-    text-align: center;
+  text-align: center;
 }
 
+/* =========================
+   NAVBAR
+========================= */
+
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #222;
-    padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #222;
+  padding: 10px 15px;
 }
 
 .nav-title {
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
+  color: white;
+  font-family: Trebuchet, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .nav-links {
-    display: none;
-    flex-direction: column;
-    background-color: #222;
-    position: absolute;
-    top: 55px;
-    right: 15px;
-    padding: 10px;
+  display: none;
+  flex-direction: column;
+  background-color: #222;
+  position: absolute;
+  top: 55px;
+  right: 15px;
+  padding: 10px;
 }
 
 .nav-links a {
-    color: white;
-    text-decoration: none;
-    padding: 8px 0;
+  color: white;
+  text-decoration: none;
+  padding: 8px 0;
 }
 
 .nav-links a:hover {
-    color: rgb(32, 57, 201);
+  color: rgb(32, 57, 201);
+}
+
+.nav-links a.active {
+  color: rgb(32, 57, 201);
+  font-weight: bold;
+  border-bottom: 2px solid rgb(32, 57, 201);
 }
 
 .hamburger {
-    font-size: 26px;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-.nav-links a.active {
-    color: rgb(32, 57, 201);
-    font-weight: bold;
-    border-bottom: 2px solid rgb(32, 57, 201);
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
 }
 
-
-
+/* =========================
+   FLASH MESSAGES
+========================= */
 
 .flash-messages {
-    list-style: none;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 5px;
+  list-style: none;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
 }
 
 .flash-messages li {
-    background-color: #ffc107;
-    padding: 10px;
-    margin-bottom: 5px;
-    border-radius: 3px;
-    color: #212529;
+  background-color: #ffc107;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  color: #212529;
 }
 
 .flash-messages li.error {
-    background-color: #dc3545;
-    color: white;
+  background-color: #dc3545;
+  color: white;
 }
 
 .flash-messages li.success {
-    background-color: #28a745;
-    color: white;
+  background-color: #28a745;
+  color: white;
+}
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.page-title {
+  text-align: center;
+  margin-top: 20px;
+}
+
 }

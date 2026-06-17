@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet"/>
+
+<div id="calendar"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<!-- pass data safely into JS -->
+<script id="assignments-data" type="application/json">
+    {{ assignments | default([]) | tojson }}
+</script>
+
+<script>
+    window.assignments = JSON.parse(
+        document.getElementById("assignments-data").textContent
+    );
+</script>
+
+{% endblock %}

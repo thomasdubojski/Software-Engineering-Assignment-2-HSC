@@ -19,35 +19,72 @@ td {
   text-align: center;
 }
 
+.create_account{
+  font-family: Trebuchet , sans-serif;
+
+}
+
 /* =========================
    NAVBAR
 ========================= */
 
 .navbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
   align-items: center;
-  justify-content: space-between;
   background-color: #222;
   padding: 10px 15px;
+  position: relative;
 }
 
+/* LEFT */
+.nav-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* LOGO */
+.nav-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+/* CENTER TITLE */
 .nav-title {
+  text-align: center;
   color: white;
   font-family: Trebuchet, sans-serif;
   font-size: 20px;
   font-weight: bold;
 }
 
+/* RIGHT HAMBURGER */
+.hamburger {
+  justify-self: end;
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* DROPDOWN MENU */
 .nav-links {
   display: none;
   flex-direction: column;
-  background-color: #222;
+
   position: absolute;
-  top: 55px;
+  top: 100%;
   right: 15px;
+
+  background-color: #222;
   padding: 10px;
+  z-index: 9999;
 }
 
+/* LINKS */
 .nav-links a {
   color: white;
   text-decoration: none;
@@ -62,14 +99,6 @@ td {
   color: rgb(32, 57, 201);
   font-weight: bold;
   border-bottom: 2px solid rgb(32, 57, 201);
-}
-
-.hamburger {
-  font-size: 26px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
 }
 
 /* =========================
@@ -106,6 +135,7 @@ td {
 ========================= */
 
 .page-title {
+  font-family: Trebuchet, Serif;
   text-align: center;
   margin-top: 20px;
 }

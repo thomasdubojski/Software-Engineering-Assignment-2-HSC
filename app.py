@@ -43,6 +43,19 @@ class Assignments(db.Model):
     created = db.Column(db.Date, default=datetime.utcnow)
     completed = db.Column(db.Boolean, default=False)
 
+    work_sessions = db.relationship("WorkSession", backref="assignment", lazy=True, cascade="all, delete-orphan")
+
+# work sessions table
+class WorkSession(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    assignment_id = db.Column(db.Integer, db.ForeignKey("assignments.id"), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    duration = db.Column(db.Integer, nullable=False)  # minutes
+    category = db.Column(db.String(50))
+    notes = db.Column(db.Text)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
+
 #Priority calculation function
 def calculate_priority(due_date):
     today = datetime.utcnow().date()
@@ -58,6 +71,15 @@ def calculate_priority(due_date):
         return 2  # Low
     else:
         return 1  # Very Low
+    
+def total_minutes(assignment):
+    return sum(
+        session.duration
+        for session in assignment.work_sessions
+    )
+
+def total_hours(assignment):
+    return round(total_minutes(assignment) / 60, 2)
 
 @app.route('/')
 def home():
@@ -193,12 +215,16 @@ def dashboard():
     data = [
         {
             "id": a.id,
-            "title": a.course + " Assignment",          
-            "subject": a.course,          
+            "title": a.course + " Assignment",
+            "subject": a.course,
             "type": a.type,
             "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
             "priority": a.priority,
             "notes": a.notes or "",
+            "completed": a.completed,
+            "hours": total_hours(a),
+            "minutes": total_minutes(a),
+            "sessions": len(a.work_sessions),
             "overdue": a.due < datetime.utcnow().date() if a.due else False
         }
         for a in assignments
@@ -216,6 +242,93 @@ def complete_assignment(id):
     db.session.commit()
 
     return jsonify({"success": True})
+
+@app.route("/assignment/<int:id>")
+def assignment_history(id):
+
+    assignment = Assignments.query.filter_by(
+        id=id,
+        user_id=session["user_id"]
+    ).first_or_404()
+
+    sessions = WorkSession.query.filter_by(
+        assignment_id=id
+    ).order_by(
+        WorkSession.start_time.desc()
+    ).all()
+
+    return render_template(
+        "assignment-history.html",
+        assignment=assignment,
+        sessions=sessions,
+        total=total_hours(assignment)
+    )
+
+@app.route("/study-statistics")
+def study_statistics():
+
+    assignments = Assignments.query.filter_by(
+        user_id=session["user_id"]
+    ).all()
+
+    total = sum(
+        total_minutes(a)
+        for a in assignments
+    )
+
+    sessions = sum(
+        len(a.work_sessions)
+        for a in assignments
+    )
+
+    return render_template(
+        "study-statistics.html",
+        assignments=assignments,
+        total_hours=round(total/60,2),
+        total_sessions=sessions
+    )
+
+@app.route("/log-work/<int:assignment_id>", methods=["GET"])
+def show_log_work(assignment_id):
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    assignment = Assignments.query.filter_by(
+        id=assignment_id,
+        user_id=session["user_id"]
+    ).first_or_404()
+
+    return render_template(
+        "log-work.html",
+        assignment=assignment
+    )
+
+@app.route("/log-work/<int:assignment_id>", methods=["POST"])
+def log_work(assignment_id):
+
+    start = request.form.get("start")
+    end = request.form.get("end")
+
+    # convert times
+    start_dt = datetime.fromisoformat(start)
+    end_dt = datetime.fromisoformat(end)
+
+    duration = int((end_dt - start_dt).total_seconds() / 60)
+
+    session_entry = WorkSession(
+        assignment_id=assignment_id,
+        start_time=start_dt,
+        end_time=end_dt,
+        duration=duration,
+        notes=request.form.get("notes", "")
+    )
+
+    db.session.add(session_entry)
+    db.session.commit()
+
+    return redirect(url_for("assignment_history", id=assignment_id))
+
 
 if __name__ == "__main__":
     with app.app_context():

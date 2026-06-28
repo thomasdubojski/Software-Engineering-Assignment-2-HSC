@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">{{ assignment.course }} - Study History</h1>
+
+<!-- Summary Card -->
+<div class="history-summary">
+
+    <h2>Total Study Time: {{ total }} hours</h2>
+
+    <p>Total Sessions: {{ sessions|length }}</p>
+
+</div>
+
+<!-- Session List -->
+<div class="session-list">
+
+    {% for s in sessions %}
+
+    <div class="session-card">
+
+        <h3>{{ s.category or "Study Session" }}</h3>
+
+        <p>
+            <strong>Start:</strong>
+            {{ s.start_time.strftime('%d %b %Y, %H:%M') }}
+        </p>
+
+        <p>
+            <strong>End:</strong>
+            {{ s.end_time.strftime('%d %b %Y, %H:%M') }}
+        </p>
+
+        <p>
+            <strong>Duration:</strong>
+            {{ s.duration }} minutes
+        </p>
+
+        {% if s.notes %}
+        <p>
+            <strong>Notes:</strong> {{ s.notes }}
+        </p>
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- Add New Session Button -->
+<div class="add-session">
+    <a href="/log-work/{{ assignment.id }}" class="btn">
+        + Add Study Session
+    </a>
+</div>
+
+{% endblock %}

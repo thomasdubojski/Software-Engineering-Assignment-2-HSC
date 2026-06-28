@@ -47,6 +47,14 @@ function openModal(a) {
             : '';
     }
 
+    setTimeout(() => {
+        const historyLink = document.getElementById("historyLink");
+
+        if (historyLink && a?.id) {
+            historyLink.href = `/assignment/${a.id}`;
+        }
+    }, 0);
+
     modal.classList.remove("hidden");
 }
 

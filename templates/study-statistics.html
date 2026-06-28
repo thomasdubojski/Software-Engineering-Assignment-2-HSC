@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Study Statistics</h1>
+
+<!-- TOTAL OVERVIEW -->
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h2>{{ total_hours }}</h2>
+        <p>Total Hours Studied</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ total_sessions }}</h2>
+        <p>Total Sessions</p>
+    </div>
+
+    <div class="stat-card">
+        <h2>{{ (total_hours / 7)|round(2) }}</h2>
+        <p>Avg Hours / Day</p>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- PER ASSIGNMENT BREAKDOWN -->
+<h2>Time by Assignment</h2>
+
+<div class="breakdown">
+
+    {% for a in assignments %}
+
+    <div class="breakdown-card">
+
+        <h3>{{ a.course }}</h3>
+
+        <p>
+            {{ (a.work_sessions | sum(attribute='duration') / 60) | round(2) }}
+            hours
+        </p>
+
+        <p>
+            {{ a.work_sessions | length }} sessions
+        </p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<hr>
+
+<!-- OPTIONAL INSIGHT SECTION -->
+<h2>Insights</h2>
+
+<ul class="insights">
+
+    <li>Most worked subject:
+        {{ assignments | map(attribute='course') | list | first }}
+    </li>
+
+    <li>
+        Average session length:
+        {{ (total_hours * 60 / total_sessions) | round(1) }} min
+    </li>
+
+</ul>
+
+{% endblock %}

@@ -109,6 +109,26 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const editBtn = document.getElementById("editBtn");
     const completeBtn = document.getElementById("completeBtn");
+    const appleCalendarBtn = document.getElementById("appleCalendarBtn");
+    const googleCalendarBtn = document.getElementById("googleCalendarBtn");
+
+    if (appleCalendarBtn) {
+        appleCalendarBtn.onclick = () => {
+            if (!selectedAssignment) return;
+
+            window.location.href =
+                `/export-calendar/${selectedAssignment.id}`;
+        };
+    }
+
+    if (googleCalendarBtn) {
+        googleCalendarBtn.onclick = () => {
+            if (!selectedAssignment) return;
+
+            window.location.href =
+                `/google-calendar/${selectedAssignment.id}`;
+        };
+    }
 
     if (editBtn) {
         editBtn.addEventListener("click", () => {
@@ -136,6 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
+    if (dashboard) {
+        renderCards();
+    }
+
+});
 document.addEventListener('DOMContentLoaded', function () {
 
     const calendarEl = document.getElementById('calendar');

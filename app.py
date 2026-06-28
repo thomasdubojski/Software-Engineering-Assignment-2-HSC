@@ -329,6 +329,57 @@ def log_work(assignment_id):
 
     return redirect(url_for("assignment_history", id=assignment_id))
 
+@app.route("/export-calendar/<int:assignment_id>")
+def export_calendar(assignment_id):
+
+    assignment = Assignments.query.filter_by(
+        id=assignment_id,
+        user_id=session["user_id"]
+    ).first_or_404()
+
+    due = assignment.due.strftime("%Y%m%d")
+
+    ics_content = f"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Assignment Tracker//EN
+BEGIN:VEVENT
+UID:{assignment.id}@assignmenttracker
+DTSTAMP:{datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")}
+SUMMARY:{assignment.course} - {assignment.type}
+DESCRIPTION:{assignment.notes or ""}
+DTSTART;VALUE=DATE:{due}
+DTEND;VALUE=DATE:{due}
+END:VEVENT
+END:VCALENDAR"""
+    
+    response = app.response_class(
+        response=ics_content,
+        mimetype="text/calendar"
+    )
+
+    response.headers["Content-Disposition"] = f"attachment; filename=assignment_{assignment.id}.ics"
+
+    return response
+
+@app.route("/google-calendar/<int:assignment_id>")
+def google_calendar(assignment_id):
+
+    assignment = Assignments.query.filter_by(
+        id=assignment_id,
+        user_id=session["user_id"]
+    ).first_or_404()
+
+    start = assignment.due.strftime("%Y%m%d")
+
+    url = (
+        "https://calendar.google.com/calendar/render?"
+        "action=TEMPLATE"
+        f"&text={assignment.course} - {assignment.type}"
+        f"&dates={start}/{start}"
+        f"&details={assignment.notes or ''}"
+    )
+
+    return redirect(url)
 
 if __name__ == "__main__":
     with app.app_context():

@@ -1,3 +1,18 @@
+<div id="sessionModal" class="modal hidden">
+  <div class="modal-content">
+
+    <span class="close-btn" id="closeSessionModal">&times;</span>
+
+    <h2>Study Session</h2>
+
+    <p><strong>Assignment:</strong> <span id="sessionAssignment"></span></p>
+    <p><strong>Duration:</strong> <span id="sessionDuration"></span></p>
+
+    <p><strong>Notes:</strong></p>
+    <p id="sessionNotes"></p>
+
+  </div>
+</div>
 <div id="modal" class="modal hidden">
   <div class="modal-content">
 
@@ -18,6 +33,7 @@
     <p id="modalNotes"></p>
 
     <div class="modal-actions">
+
     <button type="button" id="editBtn" class="edit-btn">
         Edit Assignment
     </button>
@@ -25,27 +41,26 @@
     <button type="button" id="completeBtn" class="complete-btn">
         Mark as Complete
     </button>
-    </div>
 
-    <div class="calendar-actions">
-
-    <button type="button" id="appleCalendarBtn" class="calendar-btn">
+    <button type="button" id="appleCalendarBtn" class="btn btn-secondary">
+        <span class="material-symbols-outlined">file_save</span>
         Export as .ics file
     </button>
 
-    <button type="button" id="googleCalendarBtn" class="calendar-btn">
+    <button type="button" id="googleCalendarBtn" class="btn btn-secondary">
     <img src="https://upload.wikimedia.org/wikipedia/commons/archive/a/a5/20221106121914%21Google_Calendar_icon_%282020%29.svg"
          style="width:18px; height:18px; margin-right:6px;">
     Add to Google Calendar
     </button>
 
+    <button type="button" id="historyBtn" class="btn btn-secondary">
+      <span class="material-symbols-outlined">history</span>
+      Study History
+    </button>
 
-
-    </div>
-
-    <a id="historyLink" href="#">
-    View Study History
-    </a>
+    <button type="button" id="deleteBtn" class="delete-btn">
+      <span class="material-symbols-outlined">delete</span>
+    </button>
 
   </div>
 </div>

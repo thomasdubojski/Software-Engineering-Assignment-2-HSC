@@ -111,6 +111,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const completeBtn = document.getElementById("completeBtn");
     const appleCalendarBtn = document.getElementById("appleCalendarBtn");
     const googleCalendarBtn = document.getElementById("googleCalendarBtn");
+    const historyBtn = document.getElementById("historyBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", async () => {
+            if (!selectedAssignment) return;
+
+            const confirmDelete = confirm("Delete this assignment?");
+            if (!confirmDelete) return;
+
+            const res = await fetch(`/delete-assignment/${selectedAssignment.id}`, {
+                method: "POST"
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+                location.reload();
+            }
+        });
+    }
+
+    if (historyBtn) {
+        historyBtn.addEventListener("click", () => {
+            if (!selectedAssignment) return;
+            window.location.href = `/assignment/${selectedAssignment.id}`;
+        });
+    }
 
     if (appleCalendarBtn) {
         appleCalendarBtn.onclick = () => {

@@ -43,7 +43,13 @@ class Assignments(db.Model):
     created = db.Column(db.Date, default=datetime.utcnow)
     completed = db.Column(db.Boolean, default=False)
 
-    work_sessions = db.relationship("WorkSession", backref="assignment", lazy=True, cascade="all, delete-orphan")
+    work_sessions = db.relationship(
+        "WorkSession",
+        backref="assignment",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
 
 # work sessions table
 class WorkSession(db.Model):
@@ -212,25 +218,23 @@ def dashboard():
         user_id=session['user_id']
     ).all()
 
-    data = [
-        {
-            "id": a.id,
-            "title": a.course + " Assignment",
-            "subject": a.course,
-            "type": a.type,
-            "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
-            "priority": a.priority,
-            "notes": a.notes or "",
-            "completed": a.completed,
-            "hours": total_hours(a),
-            "minutes": total_minutes(a),
-            "sessions": len(a.work_sessions),
-            "overdue": a.due < datetime.utcnow().date() if a.due else False
-        }
-        for a in assignments
-    ]
+    data = [{
+        "id": a.id,
+        "title": a.course + " Assignment",
+        "subject": a.course,
+        "type": a.type,
+        "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+        "priority": a.priority,
+        "notes": a.notes or "",
+        "completed": a.completed,
+        "hours": total_hours(a),
+        "minutes": total_minutes(a),
+        "sessions": len(a.work_sessions),
+        "overdue": a.due < datetime.utcnow().date() if a.due else False
+    } for a in assignments]
 
     return render_template("assignment-dashboard.html", assignments=data)
+
 
 @app.route('/complete-assignment/<int:id>', methods=['POST'])
 def complete_assignment(id):

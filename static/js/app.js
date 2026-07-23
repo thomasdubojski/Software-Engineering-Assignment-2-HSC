@@ -1,4 +1,7 @@
 let selectedAssignment = null;
+function icon(name) {
+    return `<span class="material-symbols-outlined">${name}</span>`;
+}
 function getPriorityLabel(p) {
     p = parseInt(p);
 
@@ -19,11 +22,20 @@ function getPriorityClass(p) {
     return "priority-very-low";
 }
 function openModal(a) {
+    
+    const sessionBox = document.getElementById("sessionModalExtra");
+    if (sessionBox) sessionBox.classList.add("hidden");
+
+    document.getElementById("modalSubject").innerText = a.subject || "";
+    document.getElementById("modalType").innerText = a.type || "";
+    document.getElementById("modalDue").innerText = a.dueDate || "";
 
     selectedAssignment = a;
 
     const modal = document.getElementById("modal");
     if (!modal) return;
+
+
 
     document.getElementById("modalTitle").innerText = a.title || "";
     document.getElementById("modalSubject").innerText = a.subject || "";
@@ -43,7 +55,7 @@ function openModal(a) {
     const overdueEl = document.getElementById("modalOverdue");
     if (overdueEl) {
         overdueEl.innerHTML = a.overdue
-            ? '<span class="overdue-bubble">⚠ OVERDUE</span>'
+            ? `${icon("warning")} OVERDUE`
             : '';
     }
 
@@ -370,16 +382,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
         eventContent: function(info) {
 
+            const isSession = info.event.extendedProps.eventType === "session";
+
+            if (isSession) {
+                return {
+                    html: `
+                        <div class="calendar-bubble session-bubble">
+                            <div class="bubble-title">
+                                ${icon("book_2")} ${info.event.title}
+                            </div>
+
+                            <div class="bubble-sub">
+                                ${info.event.extendedProps.duration || ""} mins
+                            </div>
+                        </div>
+                    `
+                };
+            }
+
             return {
                 html: `
-                    <div class="calendar-event">
-                        <div class="subject-bubble">
-                            ${info.event.title}
+                    <div class="calendar-bubble assignment-bubble">
+
+                        <div class="bubble-title">
+                            ${icon("list_alt")} ${info.event.title}
                         </div>
 
-                        <div class="priority-bubble ${getPriorityClass(info.event.extendedProps.priority)}">
-                            ${getPriorityLabel(info.event.extendedProps.priority)}
+                        <div class="bubble-row">
+
+                            <span class="priority-pill ${getPriorityClass(info.event.extendedProps.priority)}">
+                                ${getPriorityLabel(info.event.extendedProps.priority)}
+                            </span>
+
+                            ${info.event.extendedProps.overdue ? `<span class="overdue-pill">${icon("warning")} OVERDUE</span>` : ""}
+
                         </div>
+
                     </div>
                 `
             };
@@ -388,3 +426,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     calendar.render();
 });
+
+const sessionBtn = document.getElementById("sessionBtn");
+
+if (sessionBtn) {
+    sessionBtn.addEventListener("click", () => {
+        window.location.href = sessionBtn.dataset.url;
+    });
+}

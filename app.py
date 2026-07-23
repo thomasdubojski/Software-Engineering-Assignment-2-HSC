@@ -187,27 +187,53 @@ def add_assignment():
     flash("Assignment added successfully!", "success")
     return redirect(url_for('home'))
 
-@app.route('/calendar')
-def assignment_calendar():
+@app.route("/calendar")
+def calendar():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
     assignments = Assignments.query.filter_by(
         user_id=session['user_id']
     ).all()
 
-    data = [
-    {
-        "id": a.id,
-        "title": a.course,
-        "subject": a.course,
-        "type": a.type,
-        "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
-        "priority": a.priority,
-        "notes": a.notes,
-        "overdue": a.due < datetime.utcnow().date() if a.due else False
-    }
-    for a in assignments
-    ]
+    data = []
 
-    return render_template("calendar.html", assignments=data)
+    for a in assignments:
+        data.append({
+            "id": a.id,
+            "eventType": "assignment",
+            "title": a.course,
+            "subject": a.course,
+            "type": a.type,
+            "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+            "priority": a.priority,
+            "notes": a.notes,
+            "overdue": a.due < datetime.utcnow().date() if a.due else False
+        })
+
+    sessions = WorkSession.query.join(
+        Assignments,
+        WorkSession.assignment_id == Assignments.id
+    ).filter(
+        Assignments.user_id == session["user_id"]
+    ).all()
+
+    for s in sessions:
+        data.append({
+            "id": f"session-{s.id}",
+            "eventType": "session",
+            "title": "Study Session",
+            "assignment": s.assignment.course,
+            "start": s.start_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "end": s.end_time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "duration": s.duration,
+            "notes": s.notes or ""
+        })
+
+    return render_template(
+        "calendar.html",
+        assignments=data
+    )
 
 @app.route("/assignment-dashboard")
 def dashboard():

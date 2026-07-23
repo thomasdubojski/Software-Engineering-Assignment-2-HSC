@@ -50,10 +50,11 @@
 </div>
 
 <!-- Add New Session Button -->
-<div class="add-session">
-    <a href="/log-work/{{ assignment.id }}" class="btn">
-        + Add Study Session
-    </a>
+<div class="add-session"></div>
+    <button type="button" id="sessionBtn" class="btn btn-secondary" data-url="/log-work/{{ assignment.id }}">
+        <span class="material-symbols-outlined">assignment_add</span>
+        Add Study Session
+    </button>
 </div>
 
 {% endblock %}

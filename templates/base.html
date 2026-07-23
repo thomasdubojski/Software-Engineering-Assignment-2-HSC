@@ -11,6 +11,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
     </head>
+
     <body>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -26,64 +27,90 @@
         <header class="navbar">
             <!-- LEFT -->
             <div class="nav-left">
-                <img src="/static/images/Assignment Tracker Logo (192 x 192 px).png" class="nav-logo" alt="Logo">
+                <img src="/static/images/Assignment Tracker Logo - No Text (192 x 192 px).png" class="nav-logo" alt="Logo">
             </div>
 
             <!-- CENTER -->
             <div class="nav-title">
-                Assignment Logbook
+                Assignment Tracker
             </div>
 
-            <!-- RIGHT -->
-            <button class="hamburger" onclick="toggleMenu()">☰</button>
-
-            <nav id="nav-menu" class="nav-links">
-                
-                <!--- Hamburger menu links for logged in users--->
+            <div class="nav-right">
+            
                 {% if session.get('user_id') %}
-                    <a href="{{ url_for('home') }}"
-                    class="{% if request.endpoint == 'home' %}active{% endif %}">
-                        Home
-                    </a>
+                <button class="settings-button" onclick="window.location.href='/settings'"> <span class="material-symbols-outlined">settings</span> </button>
+                {%endif%}
 
-                    <a href="{{ url_for('show_form_add_assignment') }}"
-                    class="{% if request.endpoint == 'show_form_add_assignment' %}active{% endif %}">
-                        Add Assignment
-                    </a>
+                <!-- RIGHT -->
+                <button class="hamburger" onclick="toggleMenu()"> <span class="material-symbols-outlined">menu</span> </button>
 
-                    <a href="{{ url_for('assignment_calendar') }}">Calendar</a>
+                <nav id="nav-menu" class="nav-links">
+                    
+                    <!--- Hamburger menu links for logged in users--->
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('home') }}"
+                        class="{% if request.endpoint == 'home' %}active{% endif %}">
+                            Home
+                        </a>
 
-                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                
-                <!--- Hamburger menu links for non-logged in users--->
-                {% else %}
-                    <a href="{{ url_for('home') }}"
-                    class="{% if request.endpoint == 'home' %}active{% endif %}">
-                        Home
-                    </a>    
+                        <a href="{{ url_for('show_form_add_assignment') }}"
+                        class="{% if request.endpoint == 'show_form_add_assignment' %}active{% endif %}">
+                            Add Assignment
+                        </a>
 
-                    <a href="{{ url_for('show_form_login') }}"
-                    class="{% if request.endpoint == 'show_form_login' %}active{% endif %}">
-                        Login
-                    </a>
+                        <a href="{{ url_for('calendar') }}">Calendar</a>
 
-                    <a href="{{ url_for('show_form_create_account') }}"
-                    class="{% if request.endpoint == 'show_form_create_account' %}active{% endif %}">
-                        Create Account
-                    </a>
-                {% endif %}
+                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
 
-                <!--- Universal hamburger menu links --->
+                        <a href="{{ url_for('study_statistics') }}">Study Statistics</a>
+                    
+                    <!--- Hamburger menu links for non-logged in users--->
+                    {% else %}
+                        <a href="{{ url_for('home') }}"
+                        class="{% if request.endpoint == 'home' %}active{% endif %}">
+                            Home
+                        </a>    
 
-                
-            </nav>
+                        <a href="{{ url_for('show_form_login') }}"
+                        class="{% if request.endpoint == 'show_form_login' %}active{% endif %}">
+                            Login
+                        </a>
+
+                        <a href="{{ url_for('show_form_create_account') }}"
+                        class="{% if request.endpoint == 'show_form_create_account' %}active{% endif %}">
+                            Create Account
+                        </a>
+                    {% endif %}
+
+                    <!--- Universal hamburger menu links --->
+
+                    
+                </nav>
+            </div>
 
         </header>
-        <h1 class="center-text">Welcome to your Assignment Logbook</h1>
+
         <h3 class="center-text">Keep track of your assignments and stay organized!</h3>
         <div class="content">
-            {% block content %}{% endblock %}
+            {% block content %}
+
+            <img src="/static/images/Assignment Tracker Logo (512 x 512 px).png" class="center-image" alt="Logo" >
+
+            <p class="center-text">Welcome to Assignment Tracker, the site custom built to suit the needs of student like you!</p>
+
+            {% endblock %}
         </div>
+
+        <footer>
+            <div class="footer-left">
+                <p class="footer-text">© 2024 Assignment Tracker. All rights reserved.</p>
+            </div>
+
+            <div class="footer-right">
+            </div>
+            
+            
+        </footer>
         
         <!--- Javascript --->
         <script>

@@ -58,6 +58,46 @@ function openModal(a) {
     modal.classList.remove("hidden");
 }
 
+function openSessionModal(session) {
+
+    selectedAssignment = null;
+
+    const modal = document.getElementById("modal");
+    if (!modal) return;
+
+    // Hide assignment-specific elements (optional but cleaner)
+    const sessionBox = document.getElementById("sessionModalExtra");
+
+    if (sessionBox) sessionBox.classList.remove("hidden");
+
+    document.getElementById("modalTitle").innerText = "Study Session";
+    document.getElementById("modalSubject").innerText = "";
+    document.getElementById("modalType").innerText = "";
+    document.getElementById("modalDue").innerText = "";
+    document.getElementById("modalPriority").innerText = "";
+
+    document.getElementById("sessionAssignment").innerText = session.assignment;
+    document.getElementById("sessionDuration").innerText = session.duration + " mins";
+    document.getElementById("sessionNotes").innerText = session.notes || "No notes";
+
+    modal.classList.remove("hidden");
+}
+
+const sessionModal = document.getElementById("sessionModal");
+const closeSessionModal = document.getElementById("closeSessionModal");
+
+if (closeSessionModal && sessionModal) {
+    closeSessionModal.onclick = () => {
+        sessionModal.classList.add("hidden");
+    };
+}
+
+window.addEventListener("click", (e) => {
+    if (e.target === sessionModal) {
+        sessionModal.classList.add("hidden");
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const dashboard = document.getElementById("dashboard");
@@ -77,18 +117,65 @@ document.addEventListener("DOMContentLoaded", () => {
             card.classList.add("card");
 
             card.innerHTML = `
-                <h3>${a.title}</h3>
+            <h3>${a.title}</h3>
 
-                <p><strong>Subject:</strong> ${a.subject}</p>
+            <p><strong>Subject:</strong> ${a.subject}</p>
+            <p><strong>Due:</strong> ${a.dueDate}</p>
 
-                <p><strong>Due:</strong> ${a.dueDate}</p>
+            <span class="priority-bubble ${getPriorityClass(a.priority)}">
+                ${getPriorityLabel(a.priority)}
+            </span>
 
-                <span class="priority-bubble ${getPriorityClass(a.priority)}">
-                    ${getPriorityLabel(a.priority)}
-                </span>
+            ${a.overdue ? `<span class="overdue-bubble">${icon("warning")} OVERDUE</span>` : ""}
 
-                ${a.overdue ? `<span class="overdue-bubble">⚠ OVERDUE</span>` : ""}
-            `;
+            <div class="card-actions">
+
+                <button class="btn btn-iconEdit edit-btn-card" title="Edit">
+                    ${icon("edit")}
+                </button>
+
+                <button class="btn btn-iconComplete complete-btn-card" title="Complete">
+                    ${icon("check_circle")}
+                </button>
+
+                <button class="btn btn-iconDelete delete-btn-card" title="Delete">
+                    ${icon("delete")}
+                </button>
+
+            </div>
+        `;
+
+        card.querySelector(".complete-btn-card").addEventListener("click", async (e) => {
+            e.stopPropagation();
+
+            const res = await fetch(`/complete-assignment/${a.id}`, {
+                method: "POST"
+            });
+
+            const result = await res.json();
+
+            if (result.success) location.reload();
+        });
+
+        card.querySelector(".edit-btn-card").addEventListener("click", (e) => {
+            e.stopPropagation();
+            window.location.href = `/edit-assignment/${a.id}`;
+        });
+
+        card.querySelector(".delete-btn-card").addEventListener("click", async (e) => {
+            e.stopPropagation();
+
+            const confirmDelete = confirm("Delete this assignment?");
+            if (!confirmDelete) return;
+
+            const res = await fetch(`/delete-assignment/${a.id}`, {
+                method: "POST"
+            });
+
+            const result = await res.json();
+
+            if (result.success) location.reload();
+        });
 
             card.onclick = () => openModal(a);
 
@@ -206,23 +293,69 @@ document.addEventListener('DOMContentLoaded', function () {
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
 
-        events: (window.assignments || []).map(a => ({
-            title: a.title,
-            start: a.dueDate,
-            extendedProps: {
-                id: a.id,
-                subject: a.subject,
-                type: a.type,
-                priority: a.priority,
-                notes: a.notes,
-                overdue: a.overdue
+        events: (window.assignments || []).map(e => {
+            if (e.eventType === "session") {
+                return {
+                    id: e.id,
+                    title: e.assignment,
+                    start: e.start,
+                    end: e.end,
+                    color: "#2ecc71",
+
+                    extendedProps: {
+                        eventType: "session",
+                        assignment: e.assignment,
+                        duration: e.duration,
+                        notes: e.notes
+                    }
+                };
             }
-        })),
+
+            return {
+                id: e.id,
+                title: e.title,
+                start: e.dueDate,
+                color: "#2f6fed",
+
+                extendedProps: {
+                    eventType: "assignment",
+                    subject: e.subject,
+                    type: e.type,
+                    priority: e.priority,
+                    notes: e.notes,
+                    overdue: e.overdue
+                }
+            };
+        }),
+
+        eventDidMount: function(info) {
+            if (info.event.extendedProps.eventType === "session") {
+                info.el.style.backgroundColor = "#2ecc71";
+                info.el.style.borderColor = "#27ae60";
+            }
+        },
 
         eventClick: function(info) {
+            if (info.event.extendedProps.eventType === "session") {
+
+                const sessionModal = document.getElementById("sessionModal");
+
+                document.getElementById("sessionAssignment").innerText =
+                    info.event.extendedProps.assignment || "";
+
+                document.getElementById("sessionDuration").innerText =
+                    (info.event.extendedProps.duration || 0) + " mins";
+
+                document.getElementById("sessionNotes").innerText =
+                    info.event.extendedProps.notes || "No notes";
+
+                sessionModal.classList.remove("hidden");
+
+                return;
+}
 
             const assignment = {
-                id: info.event.extendedProps.id,
+                id: info.event.id,
                 title: info.event.title,
                 subject: info.event.extendedProps.subject,
                 type: info.event.extendedProps.type,

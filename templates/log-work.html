@@ -1,3 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+
 <h2>Log Study Session</h2>
 
 <h3>Live Timer</h3>
@@ -18,65 +24,79 @@ Finish
 
 <hr>
 
-<h3>Manual Entry</h3>
+<div class="form-container">
 
-<form action="/log-work/{{ assignment.id }}" method="POST">
+    <div class="form-card">
 
-<label>
+        <h3>Manual Entry</h3>
 
-Start
+        <form action="/log-work/{{ assignment.id }}" method="POST">
 
-</label>
+        <label>
 
-<input
-type="datetime-local"
-name="start"
->
+        Start
 
-<label>
+        </label>
 
-End
+        <div class="form-group">
+            <input
+            type="datetime-local"
+            name="start"
+            >
 
-</label>
+            <label>
 
-<input
-type="datetime-local"
-name="end"
->
+            End
 
-<label>
+            </label>
+        </div>
 
-Category
+        <div class="form-group">
+            <input
+            type="datetime-local"
+            name="end"
+            >
 
-</label>
+            <label>
 
-<select name="category">
+            Category
 
-<option>Research</option>
-<option>Writing</option>
-<option>Revision</option>
-<option>Reading</option>
+            </label>
+        
+        </div>
 
-</select>
+        <div class="form-group">
+            <select name="category">
 
-<label>
+            <option>Research</option>
+            <option>Writing</option>
+            <option>Revision</option>
+            <option>Reading</option>
 
-Notes
+            </select>
 
-</label>
+            <label>
 
-<textarea
-name="notes"
-></textarea>
+            Notes
 
-<button>
+            </label>
 
-Save Session
+        </div>
+        
+        <div class="form-group">
+            <textarea name="notes">
+            </textarea>
+        </div>
 
-</button>
 
-</form>
+        <button type="submit" class="btn btn-secondary">
+        Save Session
+        </button>
 
+        </form>
+    </div>
+</div>
+        
 <script>
 
 let startTime;
@@ -150,3 +170,5 @@ function stopTimer(){
 }
 
 </script>
+
+{% endblock %}

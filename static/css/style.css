@@ -101,6 +101,34 @@ td {
   border-bottom: 2px solid rgb(32, 57, 201);
 }
 
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:20px;
+}
+
+.form-group label{
+    margin-bottom:8px;
+    font-weight:600;
+    color:var(--text);
+}
+
 /* =========================
    FLASH MESSAGES
 ========================= */

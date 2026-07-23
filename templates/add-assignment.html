@@ -7,140 +7,163 @@
 {% block text %}{% endblock %}
 
 {% block content %}
-<form id="assignment-form" action="/add-assignment" method="POST">
+<div class="form-container">
 
-    <!-- Assignment type dropdown -->
-    <label for="assignment_type">Assignment Type:</label>
-    <select name="assignment_type" id="assignment_type" required>
-        <option class="heading-option" value="">Select an assignment type</option>
+    <div class="form-card">
 
-        <option value="Take Home Assignment - Essay/Paper">Take Home Assignment - Essay/Paper</option>
-        <option value="Take Home Assignment - Presentation/Speech">Take Home Assignment - Presentation/Speech</option>
-        <option value="Take Home Assignment - Practical">Take Home Assignment - Practical</option>
-        <option value="Take Home Assignment - Practical and Report">Take Home Assignment - Practical and Report</option>
-        <option value="In Class Practical">In Class Practical</option>
-        <option value="In Class Practical and Exam/Test">In Class Practical and Exam/Test</option>
-        <option value="In Class Practical and Report">In Class Practical and Report</option>
-        <option value="In Class Exam/Test">In Class Exam/Test</option>
-        <option value="Take Home Assignment and In Class Exam/Test">Take Home Assignment and In Class Exam/Test</option>
-        <option value="Other Take Home Assignment">Other Take Home Assignment</option>
-        <option value="Other In Class Assignment">Other In Class Assignment</option>
-        <option value="Other">Other</option>
+        <h1 class="page-title">Add Assignment</h1>
 
-    </select>
-    <br><br>
+        <form id="assignment-form" action="/add-assignment" method="POST">
 
-    <!-- Course Dropdown -->
-    <label for="course">Course:</label>
-    <select name="course" id="course" required>
-        <option class="heading-option" value="">Select a course</option>
+                <!-- Assignment type dropdown -->
+            <div class="form-group">
+                <label for="assignment_type">Assignment Type:</label>
+                <select name="assignment_type" id="assignment_type" required>
+                    <option class="heading-option" value="">Select an assignment type</option>
 
-        <!-- ENGLISH -->
-        <option disabled>English Courses</option>
-        <option value="Advanced English">Advanced English</option>
-        <option value="Standard English">Standard English</option>
-        <option value="English Studies">English Studies</option>
-        <option value="English Ext 1">English Ext 1</option>
-        <option value="English Ext 2">English Ext 2</option>
+                    <option value="Take Home Assignment - Essay/Paper">Take Home Assignment - Essay/Paper</option>
+                    <option value="Take Home Assignment - Presentation/Speech">Take Home Assignment - Presentation/Speech</option>
+                    <option value="Take Home Assignment - Practical">Take Home Assignment - Practical</option>
+                    <option value="Take Home Assignment - Practical and Report">Take Home Assignment - Practical and Report</option>
+                    <option value="In Class Practical">In Class Practical</option>
+                    <option value="In Class Practical and Exam/Test">In Class Practical and Exam/Test</option>
+                    <option value="In Class Practical and Report">In Class Practical and Report</option>
+                    <option value="In Class Exam/Test">In Class Exam/Test</option>
+                    <option value="Take Home Assignment and In Class Exam/Test">Take Home Assignment and In Class Exam/Test</option>
+                    <option value="Other Take Home Assignment">Other Take Home Assignment</option>
+                    <option value="Other In Class Assignment">Other In Class Assignment</option>
+                    <option value="Other">Other</option>
 
-        <!-- MATHEMATICS -->
-        <option disabled>Mathematics Courses</option>
-        <option value="Mathematics Advanced">Mathematics Advanced</option>
-        <option value="Mathematics Standard">Mathematics Standard</option>
-        <option value="Mathematics Ext 1">Mathematics Ext 1</option>
-        <option value="Mathematics Ext 2">Mathematics Ext 2</option>
+                </select>
+                <br><br>
+            </div>
 
-        <!-- SCIENCE -->
-        <option disabled>Science Courses</option>
-        <option value="Biology">Biology</option>
-        <option value="Chemistry">Chemistry</option>
-        <option value="Earth & Environmental Science">Earth & Environmental Science</option>
-        <option value="Investigating Science">Investigating Science</option>
-        <option value="Physics">Physics</option>
+            <!-- Course Dropdown -->
+            <div class="form-group">
+                <label for="course">Course:</label>
+                <select name="course" id="course" required>
+                    <option class="heading-option" value="">Select a course</option>
 
-        <!-- HSIE -->
-        <option disabled>HSIE Courses</option>
-        <option value="Aboriginal Studies">Aboriginal Studies</option>
-        <option value="Aboriginal Studies Dist Ed">Aboriginal Studies Dist Ed</option>
-        <option value="Ancient History">Ancient History</option>
-        <option value="Business Studies">Business Studies</option>
-        <option value="Business Studies Dist Ed">Business Studies Dist Ed</option>
-        <option value="Economics">Economics</option>
-        <option value="Geography">Geography</option>
-        <option value="Geography via Dist Ed">Geography Dist Ed</option>
-        <option value="Legal Studies">Legal Studies</option>
-        <option value="Modern History">Modern History</option>
-        <option value="Society & Culture">Society & Culture</option>
+                    <!-- ENGLISH -->
+                    <option disabled>English Courses</option>
+                    <option value="Advanced English">Advanced English</option>
+                    <option value="Standard English">Standard English</option>
+                    <option value="English Studies">English Studies</option>
+                    <option value="English Ext 1">English Ext 1</option>
+                    <option value="English Ext 2">English Ext 2</option>
 
-        <!-- TAS -->
-        <option disabled>TAS Courses</option>
-        <option value="Agriculture">Agriculture</option>
-        <option value="Design & Technology">Design & Technology</option>
-        <option value="Hospitality">Hospitality</option>
-        <option value="Industrial Technology">Industrial Technology</option>
-        <option value="Primary Industries">Primary Industries</option>
-        <option value="Software Engineering">Software Engineering</option>
-        <option value="Textiles and Design">Textiles and Design</option>
+                    <!-- MATHEMATICS -->
+                    <option disabled>Mathematics Courses</option>
+                    <option value="Mathematics Advanced">Mathematics Advanced</option>
+                    <option value="Mathematics Standard">Mathematics Standard</option>
+                    <option value="Mathematics Ext 1">Mathematics Ext 1</option>
+                    <option value="Mathematics Ext 2">Mathematics Ext 2</option>
 
-        <!-- CAPA -->
-        <option disabled>CAPA Courses</option>
-        <option value="Drama">Drama</option>
-        <option value="Entertainment">Entertainment</option>
-        <option value="Entertainment via Dist Ed">Entertainment via Dist Ed</option>
-        <option value="Music Aural">Music Aural</option>
-        <option value="Photography">Photography</option>
-        <option value="Visual Arts">Visual Arts</option>
+                    <!-- SCIENCE -->
+                    <option disabled>Science Courses</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Earth & Environmental Science">Earth & Environmental Science</option>
+                    <option value="Investigating Science">Investigating Science</option>
+                    <option value="Physics">Physics</option>
 
-        <!-- PDHPE -->
-        <option disabled>PDHPE Courses</option>
-        <option value="CAFS">CAFS</option>
-        <option value="Health & Movement Science">Health & Movement Science</option>
-        <option value="SLR">SLR</option>
-        <option value="Exploring Early Childhood">Exploring Early Childhood</option>
+                    <!-- HSIE -->
+                    <option disabled>HSIE Courses</option>
+                    <option value="Aboriginal Studies">Aboriginal Studies</option>
+                    <option value="Aboriginal Studies Dist Ed">Aboriginal Studies Dist Ed</option>
+                    <option value="Ancient History">Ancient History</option>
+                    <option value="Business Studies">Business Studies</option>
+                    <option value="Business Studies Dist Ed">Business Studies Dist Ed</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Geography">Geography</option>
+                    <option value="Geography via Dist Ed">Geography Dist Ed</option>
+                    <option value="Legal Studies">Legal Studies</option>
+                    <option value="Modern History">Modern History</option>
+                    <option value="Society & Culture">Society & Culture</option>
 
-        <!-- Languages -->
-        <option disabled>Language Courses</option>
-        <option value="German Beginners Dist Ed">German Beginners Dist Ed</option>
-        <option value="Japanese Continuers">Japanese Continuers</option>
+                    <!-- TAS -->
+                    <option disabled>TAS Courses</option>
+                    <option value="Agriculture">Agriculture</option>
+                    <option value="Design & Technology">Design & Technology</option>
+                    <option value="Hospitality">Hospitality</option>
+                    <option value="Industrial Technology">Industrial Technology</option>
+                    <option value="Primary Industries">Primary Industries</option>
+                    <option value="Software Engineering">Software Engineering</option>
+                    <option value="Textiles and Design">Textiles and Design</option>
 
-        <!-- OTHER -->
-        <option disabled>Other Courses</option>
-        <option value="Work Studies">Work Studies</option>
-        <option value="Other">Other</option>
+                    <!-- CAPA -->
+                    <option disabled>CAPA Courses</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Entertainment via Dist Ed">Entertainment via Dist Ed</option>
+                    <option value="Music Aural">Music Aural</option>
+                    <option value="Photography">Photography</option>
+                    <option value="Visual Arts">Visual Arts</option>
 
-    </select>
-    <br><br>
+                    <!-- PDHPE -->
+                    <option disabled>PDHPE Courses</option>
+                    <option value="CAFS">CAFS</option>
+                    <option value="Health & Movement Science">Health & Movement Science</option>
+                    <option value="SLR">SLR</option>
+                    <option value="Exploring Early Childhood">Exploring Early Childhood</option>
 
-    <!-- Assignment Notes -->
-    <label for="assignmentNotes">Assignment Notes:</label><br>
-    <textarea
-        id="assignmentNotes"
-        name="assignmentNotes"
-        maxlength="500"
-        oninput="updateCounter()"
-    ></textarea>
-    <div id="char-counter">0 / 500</div>
-    <br><br>
+                    <!-- Languages -->
+                    <option disabled>Language Courses</option>
+                    <option value="German Beginners Dist Ed">German Beginners Dist Ed</option>
+                    <option value="Japanese Continuers">Japanese Continuers</option>
 
-    <label for="due_time">Due Time:</label>
-    <input 
-        type="time" 
-        id="due_time" 
-        name="due_time"
-    >
-    <br><br>
+                    <!-- OTHER -->
+                    <option disabled>Other Courses</option>
+                    <option value="Work Studies">Work Studies</option>
+                    <option value="Other">Other</option>
 
-    <label for="due_date">Due Date:</label>
-    <input 
-        type="date" 
-        id="due_date" 
-        name="due_date" 
-        required
-    >
-    <br><br>
+                </select>
+                <br><br>
+            </div>
 
-    <input type="submit" value="Add Assignment">
-</form>
+                <!-- Assignment Notes -->
+            <div class="form-group">
+                <label for="assignmentNotes">Assignment Notes:</label><br>
+                <textarea
+                    id="assignmentNotes"
+                    name="assignmentNotes"
+                    maxlength="500"
+                    oninput="updateCounter()"
+                ></textarea>
+                <div id="char-counter">0 / 500</div>
+                <br><br>
+            </div>
+
+            <div class="form-group">
+                <label for="due_time">Due Time:</label>
+                <input 
+                    type="time" 
+                    id="due_time" 
+                    name="due_time"
+                >
+                <br><br>
+            </div>
+
+            <div class="form-group">
+                <label for="due_date">Due Date:</label>
+                <input 
+                    type="date" 
+                    id="due_date" 
+                    name="due_date" 
+                    required
+                >
+                <br><br>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Add Assignment">
+            </div>
+            
+        </form>
+
+    </div>
+
+</div>
 
 <script>
 function updateCounter() {

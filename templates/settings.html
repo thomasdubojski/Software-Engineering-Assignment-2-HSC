@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="page-title">Settings</h1>
+
+<div class="settings-container">
+
+    <!-- =========================
+        PROFILE SECTION
+    ========================== -->
+    <div class="settings-card">
+
+        <h2>Profile</h2>
+
+        <form action="/update-profile" method="POST" enctype="multipart/form-data">
+
+            <label>Display Name</label>
+            <input type="text" name="display_name" value="{{ user.username }}">
+
+            <label>Profile Picture</label>
+            <input type="file" name="profile_pic">
+
+            <button type="submit" class="btn btn-primary">
+                Save Profile
+            </button>
+
+        </form>
+    </div>
+
+    <div class="settings-card">
+
+        <h2>Email</h2>
+
+        <form action="/update-email" method="POST">
+
+            <label>Current Email</label>
+            <input type="email" name="current_email" value="{{ user.email }}" readonly>
+
+            <label>New Email</label>
+            <input type="email" name="new_email" required>
+
+            <button type="submit" class="btn btn-primary">
+                Update Email
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="settings-card">
+
+        <h2>Wallpaper</h2>
+
+        <form action="/update-wallpaper" method="POST">
+
+            <label>Current Wallpaper</label>
+            <input type="text" name="current_wallpaper" value="{{ user.wallpaper }}" readonly>
+
+            <label>New Wallpaper</label>
+            <input type="text" name="new_wallpaper" required>
+
+            <button type="submit" class="btn btn-primary">
+                Update Wallpaper
+            </button>
+
+        </form>
+
+    <!-- =========================
+        PASSWORD RESET
+    ========================== -->
+    <div class="settings-card">
+
+        <h2>Password</h2>
+
+        <form action="/change-password" method="POST">
+
+            <label>Current Password</label>
+            <input type="password" name="current_password" required>
+
+            <label>New Password</label>
+            <input type="password" name="new_password" required>
+
+            <label>Confirm New Password</label>
+            <input type="password" name="confirm_password" required>
+
+            <button type="submit" class="btn btn-primary">
+                Update Password
+            </button>
+
+        </form>
+    </div>
+
+    <!-- =========================
+        APPEARANCE (DARK MODE)
+    ========================== -->
+    <div class="settings-card">
+
+        <h2>Appearance</h2>
+
+        <p>Toggle dark mode for the app interface.</p>
+
+        <button id="darkModeToggle" class="btn btn-secondary">
+            🌙 Toggle Dark Mode
+        </button>
+
+    </div>
+
+    <!-- =========================
+        ACCOUNT DELETION
+    ========================== -->
+    <div class="settings-card danger-card">
+
+        <h2>Danger Zone</h2>
+
+        <p>Once deleted, your account cannot be recovered.</p>
+
+        <form action="/delete-account" method="POST"
+              onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+
+            <button type="submit" class="btn btn-iconDelete">
+                🗑 Delete Account
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

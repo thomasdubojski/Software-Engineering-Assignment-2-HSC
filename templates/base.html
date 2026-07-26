@@ -5,6 +5,16 @@
 
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        <link rel="manifest" href="/static/manifest.json">
+
+        <meta name="mobile-web-app-capable" content="yes">
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+        <link rel="apple-touch-icon"
+        href="/static/images/Assignment Tracker Logo - No Text (512 x 512 px).png">
         
         <!-- CSS -->
         <link rel="stylesheet" href="/static/css/style.css">
@@ -184,6 +194,35 @@
                 document.body.classList.add("dark-mode");
 
             }
+
+            if ("serviceWorker" in navigator) {
+
+                window.addEventListener("load", () => {
+
+                    navigator.serviceWorker
+                        .register("/service-worker.js")
+                        .then(registration => {
+
+                            console.log(
+                                "Service Worker registered:",
+                                registration
+                            );
+
+                        })
+                        .catch(error => {
+
+                            console.error(
+                                "Service Worker registration failed:",
+                                error
+                            );
+
+                        });
+
+                });
+
+            }
+
+
          </script>
 
          <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">

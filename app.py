@@ -115,10 +115,21 @@ def home():
     page = request.args.get('page', 1, type=int)
     return render_template('base.html', page=page)
 
+@app.route("/service-worker.js")
+def service_worker():
+    return send_from_directory(
+        "static",
+        "service-worker.js",
+        mimetype="application/javascript"
+    )
+
 @app.route('/login', methods=['GET'])
 def show_form_login():
     return render_template('login.html')
 
+@app.route('/offline')
+def offline():
+    return render_template('offline.html')
 
 @app.route('/login', methods=['POST'])
 def login():

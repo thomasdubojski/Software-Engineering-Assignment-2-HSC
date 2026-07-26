@@ -1,0 +1,17 @@
+{
+  "name": "Assignment Tracker",
+  "short_name": "Assignment Tracker",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "description": "Keep track of your assignments and stay organized!",
+  "icons": [
+    {
+      "src": "/static/images/Assignment Tracker Logo - No Text (512 x 512 px).png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

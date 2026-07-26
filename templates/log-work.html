@@ -25,6 +25,7 @@
         <h3>Manual Entry</h3>
 
         <form action="/log-work/{{ assignment.id }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <label>
 

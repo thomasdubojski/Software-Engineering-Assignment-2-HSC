@@ -3,6 +3,7 @@ from itsdangerous import URLSafeTimedSerializer
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory
 from flask import session, flash, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import CheckConstraint
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,6 +14,8 @@ import os
 # creating engine for site
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_key")
+
+csrf = CSRFProtect(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///assignment_logbook.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False

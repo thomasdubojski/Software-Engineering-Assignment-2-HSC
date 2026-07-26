@@ -10,6 +10,7 @@
         <h2>Resend Verification Email</h2>
 
         <form action="{{ url_for('resend_verification') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="form-group">
                 <label>Email Address</label>

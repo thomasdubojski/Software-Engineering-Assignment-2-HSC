@@ -2,6 +2,9 @@
 <html>
     <head>
         <title>{% block title %}Assignment Logbook{% endblock %}</title>
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
         
         <!-- CSS -->
         <link rel="stylesheet" href="/static/css/style.css">

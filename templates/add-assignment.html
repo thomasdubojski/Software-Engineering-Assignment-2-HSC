@@ -14,6 +14,7 @@
         <h1 class="Title">Add Assignment</h1>
 
         <form id="assignment-form" action="/add-assignment" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <!-- Assignment type dropdown -->
             <label for="assignment_type">Assignment Type:</label>

@@ -1,3 +1,23 @@
+const csrfToken =
+    document.querySelector('meta[name="csrf-token"]').content;
+
+function formatDate(dateValue) {
+
+    if (!dateValue) return "";
+
+    const date = new Date(dateValue);
+
+    return date.toLocaleString("en-AU", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+    });
+
+}
+
 let selectedAssignment = null;
 function icon(name) {
     return `<span class="material-symbols-outlined">${name}</span>`;
@@ -161,7 +181,10 @@ document.addEventListener("DOMContentLoaded", () => {
             e.stopPropagation();
 
             const res = await fetch(`/complete-assignment/${a.id}`, {
-                method: "POST"
+                method: "POST",
+                headers: {
+                "X-CSRFToken": csrfToken
+            }
             });
 
             const result = await res.json();
@@ -181,7 +204,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirmDelete) return;
 
             const res = await fetch(`/delete-assignment/${a.id}`, {
-                method: "POST"
+                method: "POST",
+                headers: {
+                "X-CSRFToken": csrfToken
+            }
             });
 
             const result = await res.json();
@@ -221,7 +247,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!confirmDelete) return;
 
             const res = await fetch(`/delete-assignment/${selectedAssignment.id}`, {
-                method: "POST"
+                method: "POST",
+                headers: {
+                "X-CSRFToken": csrfToken
+                }
             });
 
             const result = await res.json();

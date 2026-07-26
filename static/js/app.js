@@ -297,7 +297,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let calendar = new FullCalendar.Calendar(calendarEl, {
 
-        initialView: 'dayGridMonth',
+        initialView: 'timeGridWeek',
+
+        slotMinTime: "06:00:00",
+        slotMaxTime: "23:00:00",
+
+        allDaySlot: true,
+
+        eventTimeFormat: {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        },
 
         headerToolbar: {
             left: 'prev,next today',
@@ -326,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return {
                 id: e.id,
                 title: e.title,
-                start: e.dueDate,
+                start: e.start,
                 color: "#2f6fed",
 
                 extendedProps: {

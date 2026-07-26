@@ -219,6 +219,7 @@ def add_assignment():
     assignmentName = request.form.get('assignment_type', '').strip()
     courseName = request.form.get('course', '').strip()
     notes = request.form.get('assignmentNotes', '').strip()
+    dueTime = request.form.get('due_time', '').strip()
     dueDate = request.form.get('due_date', '').strip()
 
     if not assignmentName or not courseName or not dueDate:
@@ -226,6 +227,7 @@ def add_assignment():
         return redirect(url_for('show_form_add_assignment'))
 
     due_date_obj = datetime.strptime(dueDate, "%Y-%m-%d").date()
+
     # AUTO PRIORITY CALCULATION
     priority_value = calculate_priority(due_date_obj)
 
@@ -235,7 +237,9 @@ def add_assignment():
         course=courseName,
         priority=priority_value,
         notes=notes,
-        due=due_date_obj
+        due=due_date_obj,
+        due_time=datetime.strptime(dueTime, "%H:%M").time()
+        if dueTime else None
     )
 
     db.session.add(new_assignment)
@@ -262,7 +266,10 @@ def calendar():
             "title": a.course,
             "subject": a.course,
             "type": a.type,
-            "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+            "start": (datetime.combine(a.due, a.due_time).isoformat()
+                if a.due_time
+                else a.due.strftime("%Y-%m-%d")
+            ),
             "priority": a.priority,
             "notes": a.notes,
             "overdue": a.due < datetime.utcnow().date() if a.due else False

@@ -2,14 +2,21 @@
 
 {% block content %}
 
+<div class="dashboard" style=" background-image: url('/static/uploads/wallpapers/{{ wallpaper }}');">
+
 <script>
   const assignments = JSON.parse(`{{ assignments | tojson | safe }}`);
   window.assignments = assignments;
 </script>
 
-<h1 class="page-title">Assignment Dashboard</h1>
+<div class="dashboard-background">
+
+
+<div class="dashboard-content">
 
 <div id="dashboard" class="dashboard-grid"></div>
+
+</div>
 
 <!-- Modal -->
 {% include "components/assignment-modal.html" %}

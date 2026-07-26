@@ -17,6 +17,10 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev_key")
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///assignment_logbook.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
+UPLOAD_FOLDER = "static/uploads/wallpapers"
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
 # Email Configuration
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
@@ -42,6 +46,9 @@ class User(db.Model):
     passwordhash = db.Column(db.String(255), nullable=False)
     verified = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date, default=datetime.utcnow)
+    wallpaper = db.Column(db.String(255), default="default.jpg")
+    wallpaper_opacity = db.Column(db.Float, default=0.4)
+    dark_mode = db.Column(db.Boolean, default=False)
 
     assignments = db.relationship("Assignments", backref='student', lazy=True)
 
@@ -130,13 +137,6 @@ def login():
     flash("Invalid credentials.", "error")
     return redirect(url_for("show_form_login"))
 
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('home'))
-
-
 @app.route('/create-account', methods=['GET'])
 def show_form_create_account():
     return render_template('create-account.html')
@@ -147,6 +147,7 @@ def create_account():
     username = request.form['username'].strip()
     email = request.form['email'].strip().lower()
     password = request.form['password']
+    confirmPassword = request.form['confirmPassword']
 
     if User.query.filter_by(username=username).first():
         flash("That username is already taken. Please choose another.", "error")
@@ -154,6 +155,10 @@ def create_account():
 
     if User.query.filter_by(email=email).first():
         flash("An account with that email already exists.", "error")
+        return redirect(url_for('show_form_create_account'))
+
+    if password != confirmPassword:
+        flash("Passwords do not match.", "error")
         return redirect(url_for('show_form_create_account'))
 
     new_user = User(
@@ -323,7 +328,9 @@ def dashboard():
         "overdue": a.due < datetime.utcnow().date() if a.due else False
     } for a in assignments]
 
-    return render_template("assignment-dashboard.html", assignments=data)
+    user = User.query.get(session["user_id"])
+
+    return render_template("assignment-dashboard.html", assignments=data, wallpaper=user.wallpaper)
 
 
 @app.route('/complete-assignment/<int:id>', methods=['POST'])
@@ -613,6 +620,202 @@ def resend_verification():
     )
 
     return redirect(url_for("show_form_login"))
+
+# Settings routes
+
+# Update email
+@app.route("/update-email", methods=["POST"])
+def update_email():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session["user_id"])
+
+    new_email = request.form["new_email"].strip().lower()
+
+    existing = User.query.filter_by(
+        email=new_email
+    ).first()
+
+    if existing:
+        flash(
+            "That email address is already being used.",
+            "error"
+        )
+        return redirect(url_for("settings"))
+
+    user.email = new_email
+    user.verified = False
+
+    db.session.commit()
+
+    flash(
+        "Email updated. Please verify your new email address.",
+        "success"
+    )
+
+    send_verification_email(user)
+
+    return redirect(url_for("settings"))
+
+# Add/Update wallpaper
+@app.route("/update-wallpaper", methods=["POST"])
+def update_wallpaper():
+
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+
+    user = User.query.get(
+        session["user_id"]
+    )
+
+
+    file = request.files["wallpaper"]
+
+
+    if file.filename == "":
+        flash(
+            "No file selected.",
+            "error"
+        )
+        return redirect(url_for("settings"))
+
+
+    filename = (
+        f"user_{user.user_id}_"
+        + file.filename
+    )
+
+
+    filepath = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        filename
+    )
+
+
+    file.save(filepath)
+
+
+    user.wallpaper = filename
+
+    user.wallpaper_opacity = float(
+        request.form.get(
+            "opacity",
+            0.4
+        )
+    )
+
+    db.session.commit()
+
+
+    flash(
+        "Wallpaper updated successfully.",
+        "success"
+    )
+
+
+    return redirect(url_for("settings"))
+
+# Reset wallpaper
+@app.route("/reset-wallpaper", methods=["POST"])
+def reset_wallpaper():
+
+    user=User.query.get(
+    session["user_id"]
+    )
+
+    user.wallpaper="default.jpg"
+
+    db.session.commit()
+
+
+    flash(
+    "Wallpaper reset",
+    "success"
+    )
+
+    return redirect(
+    url_for("settings")
+    )
+
+# Change password
+@app.route("/change-password", methods=["POST"])
+def change_password():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session["user_id"])
+
+    current = request.form["current_password"]
+    new = request.form["new_password"]
+    confirm = request.form["confirm_password"]
+
+
+    if not check_password_hash(
+        user.passwordhash,
+        current
+    ):
+        flash(
+            "Current password is incorrect.",
+            "error"
+        )
+        return redirect(url_for("settings"))
+
+
+    if new != confirm:
+        flash(
+            "New passwords do not match.",
+            "error"
+        )
+        return redirect(url_for("settings"))
+
+
+    user.passwordhash = generate_password_hash(new)
+
+    db.session.commit()
+
+    flash(
+        "Password updated successfully.",
+        "success"
+    )
+
+    return redirect(url_for("settings"))
+
+# Delete account
+@app.route("/delete-account", methods=["POST"])
+def delete_account():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session["user_id"])
+
+    flash(
+        "Are you sure you want to delete your account? This action cannot be undone.",
+        "warning"
+    )
+
+    db.session.delete(user)
+    db.session.commit()
+
+    session.clear()
+
+    flash(
+        "Your account has been deleted.",
+        "success"
+    )
+
+    return redirect(url_for("home"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
+
+
 
 if __name__ == "__main__":
     with app.app_context():

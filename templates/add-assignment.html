@@ -11,13 +11,13 @@
 
     <div class="form-card">
 
-        <h1 class="page-title">Add Assignment</h1>
+        <h1 class="Title">Add Assignment</h1>
 
         <form id="assignment-form" action="/add-assignment" method="POST">
 
                 <!-- Assignment type dropdown -->
+            <label for="assignment_type">Assignment Type:</label>
             <div class="form-group">
-                <label for="assignment_type">Assignment Type:</label>
                 <select name="assignment_type" id="assignment_type" required>
                     <option class="heading-option" value="">Select an assignment type</option>
 
@@ -39,8 +39,8 @@
             </div>
 
             <!-- Course Dropdown -->
+            <label for="course">Course:</label>
             <div class="form-group">
-                <label for="course">Course:</label>
                 <select name="course" id="course" required>
                     <option class="heading-option" value="">Select a course</option>
 
@@ -121,31 +121,28 @@
                 <br><br>
             </div>
 
-                <!-- Assignment Notes -->
+            <label for="assignmentNotes">Assignment Notes:</label>
+            <!-- Assignment Notes -->
             <div class="form-group">
-                <label for="assignmentNotes">Assignment Notes:</label><br>
-                <textarea
-                    id="assignmentNotes"
-                    name="assignmentNotes"
-                    maxlength="500"
-                    oninput="updateCounter()"
-                ></textarea>
-                <div id="char-counter">0 / 500</div>
+                <br>
+                <textarea id="assignmentNotes" name="assignmentNotes" maxlength="500" oninput="updateCounter()"></textarea>
+                <div id="char-counter" class="subtitle">0 / 500</div>
+                <br><br>
+            </div>
+            
+
+            <label for="due_time">Due Time:</label>
+            <!-- Due Time -->
+            <div class="form-group">
+                
+                <input type="time" id="due_time" name="due_time">
                 <br><br>
             </div>
 
+            <label for="due_date">Due Date:</label>
+            <!-- Due Date -->
             <div class="form-group">
-                <label for="due_time">Due Time:</label>
-                <input 
-                    type="time" 
-                    id="due_time" 
-                    name="due_time"
-                >
-                <br><br>
-            </div>
-
-            <div class="form-group">
-                <label for="due_date">Due Date:</label>
+                
                 <input 
                     type="date" 
                     id="due_date" 

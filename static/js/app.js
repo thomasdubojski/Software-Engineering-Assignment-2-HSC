@@ -28,7 +28,7 @@ function openModal(a) {
 
     document.getElementById("modalSubject").innerText = a.subject || "";
     document.getElementById("modalType").innerText = a.type || "";
-    document.getElementById("modalDue").innerText = a.dueDate || "";
+    document.getElementById("modalDue").innerText = formatDate(a.dueDate);
 
     selectedAssignment = a;
 
@@ -40,7 +40,7 @@ function openModal(a) {
     document.getElementById("modalTitle").innerText = a.title || "";
     document.getElementById("modalSubject").innerText = a.subject || "";
     document.getElementById("modalType").innerText = a.type || "";
-    document.getElementById("modalDue").innerText = a.dueDate || "";
+    document.getElementById("modalDue").innerText = formatDate(a.dueDate);
 
     const priorityEl = document.getElementById("modalPriority");
     if (priorityEl) {
@@ -302,6 +302,8 @@ document.addEventListener('DOMContentLoaded', function () {
         slotMinTime: "06:00:00",
         slotMaxTime: "23:00:00",
 
+        scrollTime: "08:00:00",
+
         allDaySlot: true,
 
         eventTimeFormat: {
@@ -320,10 +322,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (e.eventType === "session") {
                 return {
                     id: e.id,
-                    title: e.assignment,
+                    title: "Study: " + e.assignment,
                     start: e.start,
                     end: e.end,
-                    color: "#2ecc71",
+                    allDay: false,
 
                     extendedProps: {
                         eventType: "session",
@@ -382,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 title: info.event.title,
                 subject: info.event.extendedProps.subject,
                 type: info.event.extendedProps.type,
-                dueDate: info.event.startStr,
+                dueDate: info.event.start,
                 priority: info.event.extendedProps.priority,
                 notes: info.event.extendedProps.notes,
                 overdue: info.event.extendedProps.overdue

@@ -39,6 +39,7 @@
             
                 {% if session.get('user_id') %}
                 <button class="settings-button" onclick="window.location.href='/settings'"> <span class="material-symbols-outlined">settings</span> </button>
+                <button class="logout-button" onclick="window.location.href='/logout'"> <span class="material-symbols-outlined">logout</span> </button>
                 {%endif%}
 
                 <!-- RIGHT -->
@@ -63,6 +64,10 @@
                         <a href="{{ url_for('dashboard') }}">Dashboard</a>
 
                         <a href="{{ url_for('study_statistics') }}">Study Statistics</a>
+                        
+                        <a href="{{ url_for('settings') }}">Settings</a>
+
+                        <a href="{{ url_for('logout') }}">Logout</a>
                     
                     <!--- Hamburger menu links for non-logged in users--->
                     {% else %}
@@ -96,7 +101,7 @@
 
             <img src="/static/images/Assignment Tracker Logo (512 x 512 px).png" class="center-image" alt="Logo" >
 
-            <p class="center-text">Welcome to Assignment Tracker, the site custom built to suit the needs of student like you!</p>
+            <p class="center-text">Welcome to Assignment Tracker, the site custom built to suit the needs of students like you!</p>
 
             {% endblock %}
         </div>
@@ -151,9 +156,35 @@
             }
          });
 
+        /* =========================
+        Dark Mode Toggle
+        ========================= */
+
+         const toggle = document.getElementById("darkModeToggle");
+
+            if(toggle){
+                toggle.onclick = () => {
+
+                    document.body.classList.toggle("dark-mode");
+
+                    localStorage.setItem(
+                        "darkMode",
+                        document.body.classList.contains("dark-mode")
+                    );
+
+                };
+
+            }
+
+            if(localStorage.getItem("darkMode") === "true"){
+
+                document.body.classList.add("dark-mode");
+
+            }
          </script>
 
          <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+         
          <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 
          <script src="/static/js/app.js"></script>

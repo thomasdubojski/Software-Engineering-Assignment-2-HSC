@@ -3,30 +3,24 @@
 {% block title %}Calendar{% endblock %}
 
 {% block content %}
-
-<h2>Log Study Session</h2>
-
-<h3>Live Timer</h3>
-
-<div id="timer">
-
-00:00:00
-
-</div>
-
-<button onclick="startTimer()">
-Start
-</button>
-
-<button onclick="stopTimer()">
-Finish
-</button>
-
-<hr>
-
-<div class="form-container">
-
+<div form-container>
     <div class="form-card">
+
+        <h2>Log Study Session</h2>
+
+        <h3>Live Timer</h3>
+
+        <div id="timer">
+
+        00:00:00
+
+        </div>
+
+        <button onclick="startTimer()"> Start </button>
+
+        <button onclick="stopTimer()"> Finish </button>
+
+        <hr>
 
         <h3>Manual Entry</h3>
 
@@ -39,31 +33,16 @@ Finish
         </label>
 
         <div class="form-group">
-            <input
-            type="datetime-local"
-            name="start"
-            >
-
-            <label>
-
-            End
-
-            </label>
+            <input type="datetime-local" name="start">
         </div>
+
+        <label> End </label>
 
         <div class="form-group">
-            <input
-            type="datetime-local"
-            name="end"
-            >
-
-            <label>
-
-            Category
-
-            </label>
-        
+            <input type="datetime-local" name="end">
         </div>
+
+        <label> Category </label>
 
         <div class="form-group">
             <select name="category">
@@ -75,14 +54,10 @@ Finish
 
             </select>
 
-            <label>
-
-            Notes
-
-            </label>
-
         </div>
-        
+            
+            <label> Notes </label>
+
         <div class="form-group">
             <textarea name="notes">
             </textarea>
@@ -96,6 +71,7 @@ Finish
         </form>
     </div>
 </div>
+
         
 <script>
 

@@ -2,129 +2,161 @@
 
 {% block content %}
 
-<h1 class="page-title">Settings</h1>
+<div class="form-container">
 
-<div class="settings-container">
 
-    <!-- =========================
-        PROFILE SECTION
-    ========================== -->
-    <div class="settings-card">
-
-        <h2>Profile</h2>
-
-        <form action="/update-profile" method="POST" enctype="multipart/form-data">
-
-            <label>Display Name</label>
-            <input type="text" name="display_name" value="{{ user.username }}">
-
-            <label>Profile Picture</label>
-            <input type="file" name="profile_pic">
-
-            <button type="submit" class="btn btn-primary">
-                Save Profile
-            </button>
-
-        </form>
-    </div>
-
-    <div class="settings-card">
+    <!-- Update Email -->
+    <div class="form-card">
 
         <h2>Email</h2>
 
         <form action="/update-email" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <label>Current Email</label>
+        <label>Current Email</label>
+        <div class="form-group">
             <input type="email" name="current_email" value="{{ user.email }}" readonly>
+        </div>
 
-            <label>New Email</label>
+        <label>New Email</label>
+        <div class="form-group">
             <input type="email" name="new_email" required>
+        </div>
 
-            <button type="submit" class="btn btn-primary">
-                Update Email
-            </button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary"> Update Email </button>
+        </div>
 
         </form>
 
     </div>
 
-    <div class="settings-card">
 
-        <h2>Wallpaper</h2>
+    <!-- Wallpaper Add/Remove-->
+    <div class="form-card">
 
-        <form action="/update-wallpaper" method="POST">
+        <h2>Dashboard Wallpaper</h2>
 
-            <label>Current Wallpaper</label>
-            <input type="text" name="current_wallpaper" value="{{ user.wallpaper }}" readonly>
+        <form action="/update-wallpaper" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+        <label>Select Image</label>
+        <div class="form-group"> 
+            <input type="file" id="wallpaperInput" name="wallpaper" accept="image/*" required>
+        </div>
 
-            <label>New Wallpaper</label>
-            <input type="text" name="new_wallpaper" required>
+        <div class="form-group">
+            <img id="wallpaperPreview" src=""style="display:none; width:250px; height:150px; object-fit:cover; border-radius:15px; margin-top:15px; ">
+        </div>
 
-            <button type="submit" class="btn btn-primary">
-                Update Wallpaper
-            </button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary"> Upload Wallpaper </button>
+        </div>
 
         </form>
 
-    <!-- =========================
-        PASSWORD RESET
-    ========================== -->
-    <div class="settings-card">
+        <div class="form-group">
+            <form action="/reset-wallpaper" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+            <button class="btn btn-secondary"> Reset Wallpaper </button>
+            </form>
+        </div>
 
+    </div>    
+
+
+    <!--Password Reset-->
+    <div class="form-card">
+        
         <h2>Password</h2>
 
         <form action="/change-password" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <label>Current Password</label>
+        <label>Current Password</label>
+        <div class="form-group">
             <input type="password" name="current_password" required>
+        </div>
 
-            <label>New Password</label>
+        <label>New Password</label>
+        <div class="form-group">  
             <input type="password" name="new_password" required>
+        </div>
 
-            <label>Confirm New Password</label>
+        <label>Confirm New Password</label>
+        <div class="form-group">
             <input type="password" name="confirm_password" required>
+        </div>
 
-            <button type="submit" class="btn btn-primary">
-                Update Password
-            </button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary"> Update Password </button>
+        </div>
 
         </form>
-    </div>
-
-    <!-- =========================
-        APPEARANCE (DARK MODE)
-    ========================== -->
-    <div class="settings-card">
-
-        <h2>Appearance</h2>
-
-        <p>Toggle dark mode for the app interface.</p>
-
-        <button id="darkModeToggle" class="btn btn-secondary">
-            🌙 Toggle Dark Mode
-        </button>
 
     </div>
 
-    <!-- =========================
-        ACCOUNT DELETION
-    ========================== -->
-    <div class="settings-card danger-card">
+
+    <!-- Dark Mode Toggle -->
+    <div class="form-card">
+        
+            <h2>Appearance</h2>
+
+            <p>Toggle dark mode for the app interface.</p>
+
+        <div class="form-group">
+            <button id="darkModeToggle" class="btn btn-secondary"> Toggle Dark Mode </button>
+        </div>
+        
+
+    <!-- Delete Account -->
 
         <h2>Danger Zone</h2>
 
         <p>Once deleted, your account cannot be recovered.</p>
 
-        <form action="/delete-account" method="POST"
-              onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+        <form action="/delete-account" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <button type="submit" class="btn btn-iconDelete">
-                🗑 Delete Account
-            </button>
+        <div class="form-group">
+            <button type="submit" class="btn btn-iconDelete"> Delete Account </button>
+        </div>
 
         </form>
+
     </div>
 
 </div>
+
+<!-- Script for Wallpaper Preview-->
+<script>
+
+    const wallpaperInput =
+    document.getElementById("wallpaperInput");
+
+
+    const preview =
+    document.getElementById("wallpaperPreview");
+
+
+    wallpaperInput.addEventListener(
+    "change",
+    function(){
+
+        const file=this.files[0];
+
+        if(file){
+
+            preview.src =
+            URL.createObjectURL(file);
+
+            preview.style.display="block";
+
+        }
+
+    });
+
+</script>
 
 {% endblock %}

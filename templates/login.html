@@ -26,5 +26,13 @@
 
         </form>
     </div>
+
+    <p style="text-align:center; margin-top:15px;">
+        Haven't verified your email?
+        <a href="{{ url_for('show_resend_verification') }}">
+            Resend verification email
+        </a>
+    </p>
+    
 </div>
 {% endblock %}

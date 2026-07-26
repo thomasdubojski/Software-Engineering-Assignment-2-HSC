@@ -120,13 +120,15 @@ def login():
     if user and check_password_hash(user.passwordhash, password):
 
         if not user.verified:
-            return "Please verify your email before logging in.", 403
+            flash("Please verify your email before logging in.", "error")
+            return redirect(url_for("show_form_login"))
         
         session['user_id'] = user.user_id
         session['username'] = user.username
         return redirect(url_for('home'))
 
-    return "Invalid credentials", 401
+    flash("Invalid credentials.", "error")
+    return redirect(url_for("show_form_login"))
 
 
 @app.route('/logout')
@@ -142,10 +144,22 @@ def show_form_create_account():
 
 @app.route('/create-account', methods=['POST'])
 def create_account():
+    username = request.form['username'].strip()
+    email = request.form['email'].strip().lower()
+    password = request.form['password']
+
+    if User.query.filter_by(username=username).first():
+        flash("That username is already taken. Please choose another.", "error")
+        return redirect(url_for('show_form_create_account'))
+
+    if User.query.filter_by(email=email).first():
+        flash("An account with that email already exists.", "error")
+        return redirect(url_for('show_form_create_account'))
+
     new_user = User(
-        username=request.form['username'],
-        email=request.form['email'],
-        passwordhash=generate_password_hash(request.form['password'])
+        username=username,
+        email=email,
+        passwordhash=generate_password_hash(password)
     )
 
     db.session.add(new_user)
@@ -158,7 +172,7 @@ def create_account():
         "success"
     )
 
-    return redirect(url_for('login'))
+    return redirect(url_for('show_form_login'))
 
 @app.route("/verify/<token>")
 def verify_email(token):
@@ -565,6 +579,33 @@ Assignment Centre
 
     mail.send(msg)
 
+@app.route("/resend-verification")
+def show_resend_verification():
+    return render_template("resend-verification.html")
+
+@app.route("/resend-verification", methods=["POST"])
+def resend_verification():
+
+    email = request.form["email"].strip().lower()
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("No account exists with that email.", "error")
+        return redirect(url_for("show_resend_verification"))
+
+    if user.verified:
+        flash("This account has already been verified.", "success")
+        return redirect(url_for("show_form_login"))
+
+    send_verification_email(user)
+
+    flash(
+        "A new verification email has been sent.",
+        "success"
+    )
+
+    return redirect(url_for("show_form_login"))
 
 if __name__ == "__main__":
     with app.app_context():

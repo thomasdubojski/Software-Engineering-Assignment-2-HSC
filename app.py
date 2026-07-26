@@ -7,6 +7,8 @@ from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import CheckConstraint
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+import uuid
 import flask_mail
 import secrets
 import os
@@ -22,7 +24,17 @@ app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
 UPLOAD_FOLDER = "static/uploads/wallpapers"
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["UPLOAD_FOLDER"] = os.path.join(
+    app.root_path,
+    "static",
+    "uploads",
+    "wallpapers"
+)
+
+os.makedirs(
+    app.config["UPLOAD_FOLDER"],
+    exist_ok=True
+)
 
 # Email Configuration
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -143,7 +155,7 @@ def login():
         if not user.verified:
             flash("Please verify your email before logging in.", "error")
             return redirect(url_for("show_form_login"))
-        
+
         session['user_id'] = user.user_id
         session['username'] = user.username
         return redirect(url_for('home'))
@@ -344,7 +356,7 @@ def dashboard():
 
     user = User.query.get(session["user_id"])
 
-    return render_template("assignment-dashboard.html", assignments=data, wallpaper=user.wallpaper)
+    return render_template("assignment-dashboard.html", assignments=data, user=User.query.get(session["user_id"]))
 
 
 @app.route('/complete-assignment/<int:id>', methods=['POST'])
@@ -571,7 +583,7 @@ def confirm_verification_token(token, expiration=3600):
 
     except Exception:
         return None
-    
+
 def send_verification_email(user):
 
     token = generate_verification_token(user.email)
@@ -686,10 +698,10 @@ def update_wallpaper():
     )
 
 
-    file = request.files["wallpaper"]
+    file = request.files.get("wallpaper")
 
 
-    if file.filename == "":
+    if not file or file.filename == "":
         flash(
             "No file selected.",
             "error"
@@ -697,9 +709,11 @@ def update_wallpaper():
         return redirect(url_for("settings"))
 
 
+    extension = file.filename.rsplit(".", 1)[1].lower()
+
     filename = (
         f"user_{user.user_id}_"
-        + file.filename
+        f"{uuid.uuid4().hex}.{extension}"
     )
 
 
@@ -835,3 +849,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+

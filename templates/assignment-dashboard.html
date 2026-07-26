@@ -2,23 +2,29 @@
 
 {% block content %}
 
-<div class="dashboard" style=" background-image: url('/static/uploads/wallpapers/{{ wallpaper }}');">
-
 <script>
   const assignments = JSON.parse(`{{ assignments | tojson | safe }}`);
   window.assignments = assignments;
 </script>
 
-<div class="dashboard-background">
+<div class="dashboard-page">
 
+    <div class="dashboard-background"
+        {% if user.wallpaper %}
+        style="background-image: url('/static/uploads/wallpapers/{{ user.wallpaper }}');"
+        {% endif %}
+    >
 
-<div class="dashboard-content">
+        <div class="dashboard-content">
 
-<div id="dashboard" class="dashboard-grid"></div>
+            <div id="dashboard" class="dashboard-grid"></div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<!-- Modal -->
 {% include "components/assignment-modal.html" %}
 
 {% endblock %}

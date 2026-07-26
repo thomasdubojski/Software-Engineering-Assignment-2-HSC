@@ -1,4 +1,4 @@
-const CACHE_NAME = "assignment-tracker-v1";
+const CACHE_NAME = "assignment-tracker-v2";
 
 const FILES_TO_CACHE = [
     "/",
@@ -51,14 +51,25 @@ self.addEventListener("activate", event => {
 // Fetch
 self.addEventListener("fetch", event => {
 
+    const requestURL = new URL(event.request.url);
+
+    // Never cache authentication or POST requests
+    if (
+        event.request.method !== "GET" ||
+        requestURL.pathname.includes("/login") ||
+        requestURL.pathname.includes("/logout") ||
+        requestURL.pathname.includes("/create-account")
+    ) {
+
+        return;
+
+    }
+
+
     event.respondWith(
 
-        caches.match(event.request)
-            .then(response => {
-
-                return response || fetch(event.request);
-
-            })
+        fetch(event.request)
+            .catch(() => caches.match(event.request))
 
     );
 

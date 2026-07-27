@@ -3,18 +3,17 @@
     <head>
         <title>{% block title %}Assignment Logbook{% endblock %}</title>
 
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="apple-touch-icon"href="/static/images/Assignment Tracker Logo - No Text (512 x 512 px).png">
 
         <link rel="manifest" href="/static/manifest.json">
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <meta name="mobile-web-app-capable" content="yes">
 
         <meta name="apple-mobile-web-app-capable" content="yes">
 
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-        <link rel="apple-touch-icon"
-        href="/static/images/Assignment Tracker Logo - No Text (512 x 512 px).png">
 
         <!-- CSS -->
         <link rel="stylesheet" href="/static/css/style.css">
@@ -24,6 +23,7 @@
     </head>
 
     <body>
+        <!-- Flash messages HTML -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <ul class="flash-messages">
@@ -34,41 +34,37 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Hamburger menu -->
+        <!-- Page header and nav buttons -->
         <header class="navbar">
-            <!-- LEFT -->
+
+            <!-- Left -->
             <div class="nav-left">
                 <img src="/static/images/Assignment Tracker Logo - No Text (192 x 192 px).png" class="nav-logo" alt="Logo">
             </div>
 
-            <!-- CENTER -->
+            <!-- Center -->
             <div class="nav-title">
                 Assignment Tracker
             </div>
 
+            <!-- Right -->
             <div class="nav-right">
 
+                <!-- Header buttons for auth users -->
                 {% if session.get('user_id') %}
                 <button class="settings-button" onclick="window.location.href='/settings'"> <span class="material-symbols-outlined">settings</span> </button>
                 <button class="logout-button" onclick="window.location.href='/logout'"> <span class="material-symbols-outlined">logout</span> </button>
                 {%endif%}
 
-                <!-- RIGHT -->
                 <button class="hamburger" onclick="toggleMenu()"> <span class="material-symbols-outlined">menu</span> </button>
 
                 <nav id="nav-menu" class="nav-links">
 
                     <!--- Hamburger menu links for logged in users--->
                     {% if session.get('user_id') %}
-                        <a href="{{ url_for('home') }}"
-                        class="{% if request.endpoint == 'home' %}active{% endif %}">
-                            Home
-                        </a>
+                        <a href="{{ url_for('home') }}"class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
 
-                        <a href="{{ url_for('show_form_add_assignment') }}"
-                        class="{% if request.endpoint == 'show_form_add_assignment' %}active{% endif %}">
-                            Add Assignment
-                        </a>
+                        <a href="{{ url_for('show_form_add_assignment') }}"class="{% if request.endpoint == 'show_form_add_assignment' %}active{% endif %}">Add Assignment</a>
 
                         <a href="{{ url_for('calendar') }}">Calendar</a>
 
@@ -82,24 +78,12 @@
 
                     <!--- Hamburger menu links for non-logged in users--->
                     {% else %}
-                        <a href="{{ url_for('home') }}"
-                        class="{% if request.endpoint == 'home' %}active{% endif %}">
-                            Home
-                        </a>
+                        <a href="{{ url_for('home') }}"class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
 
-                        <a href="{{ url_for('show_form_login') }}"
-                        class="{% if request.endpoint == 'show_form_login' %}active{% endif %}">
-                            Login
-                        </a>
+                        <a href="{{ url_for('show_form_login') }}"class="{% if request.endpoint == 'show_form_login' %}active{% endif %}">Login</a>
 
-                        <a href="{{ url_for('show_form_create_account') }}"
-                        class="{% if request.endpoint == 'show_form_create_account' %}active{% endif %}">
-                            Create Account
-                        </a>
+                        <a href="{{ url_for('show_form_create_account') }}"class="{% if request.endpoint == 'show_form_create_account' %}active{% endif %}">Create Account</a>
                     {% endif %}
-
-                    <!--- Universal hamburger menu links --->
-
 
                 </nav>
             </div>
@@ -107,6 +91,7 @@
         </header>
 
         <h3 class="center-text">Keep track of your assignments and stay organized!</h3>
+
         <div class="content">
             {% block content %}
 
@@ -117,11 +102,15 @@
             {% endblock %}
         </div>
 
+        <!-- Page footer -->
         <footer>
+            
+            <!-- Left -->
             <div class="footer-left">
                 <p class="footer-text">© 2024 Assignment Tracker. All rights reserved.</p>
             </div>
 
+            <!-- Right -->
             <div class="footer-right">
             </div>
 
@@ -130,9 +119,8 @@
 
         <!--- Javascript --->
         <script>
-        /* =========================
-        Hamburger Menu
-        ========================= */
+
+        /* Hamburger/Navbar */
         function toggleMenu() {
             const menu = document.getElementById("nav-menu");
             menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -149,9 +137,7 @@
             }
         });
 
-        /* =========================
-        Flash Messages
-        ========================= */
+        /* Flash Messages */
         function closeFlash() {
             const overlay = document.getElementById("flash-overlay");
             if (overlay) {
@@ -167,9 +153,7 @@
             }
          });
 
-        /* =========================
-        Dark Mode Toggle
-        ========================= */
+        /* Dark Mode Toggle */
 
          const toggle = document.getElementById("darkModeToggle");
 

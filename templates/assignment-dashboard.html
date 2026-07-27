@@ -9,11 +9,7 @@
 
 <div class="dashboard-page">
 
-    <div class="dashboard-background"
-        {% if user.wallpaper %}
-        style="background-image: url('/static/uploads/wallpapers/{{ user.wallpaper }}');"
-        {% endif %}
-    >
+    <div class="dashboard-background"{% if user.wallpaper %} style="background-image: url('/static/uploads/wallpapers/{{ user.wallpaper }}');"{% endif %}>
 
         <div class="dashboard-content">
 

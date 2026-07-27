@@ -1,6 +1,8 @@
+/* CSRF setup within JS */
 const csrfToken =
     document.querySelector('meta[name="csrf-token"]').content;
 
+/* Setting function for date format */
 function formatDate(dateValue) {
 
     if (!dateValue) return "";
@@ -19,9 +21,13 @@ function formatDate(dateValue) {
 }
 
 let selectedAssignment = null;
+
+/* Material symbol integration */
 function icon(name) {
     return `<span class="material-symbols-outlined">${name}</span>`;
 }
+
+/* Priority label and class definition */
 function getPriorityLabel(p) {
     p = parseInt(p);
 
@@ -41,6 +47,8 @@ function getPriorityClass(p) {
     if (p === 2) return "priority-low";
     return "priority-very-low";
 }
+
+/* Modal system and relevant data */
 function openModal(a) {
     
     const sessionBox = document.getElementById("sessionModalExtra");
@@ -139,6 +147,7 @@ window.addEventListener("click", (e) => {
     }
 });
 
+/* Dashboard and modal bubble formatting/behaviour and button system */ 
 document.addEventListener("DOMContentLoaded", () => {
 
     const dashboard = document.getElementById("dashboard");
@@ -337,6 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+/* Calendar formatting and behaviour */
 document.addEventListener('DOMContentLoaded', function () {
 
     const calendarEl = document.getElementById('calendar');
@@ -497,6 +508,7 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 });
 
+/* Button function for session history page */
 const sessionBtn = document.getElementById("sessionBtn");
 
 if (sessionBtn) {

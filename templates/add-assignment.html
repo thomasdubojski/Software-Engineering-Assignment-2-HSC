@@ -122,8 +122,8 @@
                 <br><br>
             </div>
 
-            <label for="assignmentNotes">Assignment Notes:</label>
             <!-- Assignment Notes -->
+            <label for="assignmentNotes">Assignment Notes:</label>
             <div class="form-group">
                 <br>
                 <textarea id="assignmentNotes" name="assignmentNotes" maxlength="500" oninput="updateCounter()"></textarea>
@@ -131,17 +131,16 @@
                 <br><br>
             </div>
             
-
-            <label for="due_time">Due Time:</label>
             <!-- Due Time -->
+            <label for="due_time">Due Time:</label>
             <div class="form-group">
                 
                 <input type="time" id="due_time" name="due_time">
                 <br><br>
             </div>
 
-            <label for="due_date">Due Date:</label>
             <!-- Due Date -->
+            <label for="due_date">Due Date:</label>
             <div class="form-group">
                 
                 <input 
@@ -164,6 +163,8 @@
 </div>
 
 <script>
+
+/* Assignment Notes Char Counter */
 function updateCounter() {
     const textarea = document.getElementById("assignmentNotes");
     const counter = document.getElementById("char-counter");
@@ -183,5 +184,6 @@ document.getElementById("assignment-form").addEventListener("submit", function (
 });
 
 document.addEventListener("DOMContentLoaded", updateCounter);
+
 </script>
 {% endblock %}

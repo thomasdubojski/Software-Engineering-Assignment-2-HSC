@@ -13,29 +13,28 @@
         <form method="POST" action="{{ url_for('login') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+            <!-- Username -->
             <div class="form-group">
                 <input type="text" name="username" placeholder="Username" required>
             </div>
-              
+            
+            <!-- Password -->
             <div class="form-group">
                 <input type="password" name="password" placeholder="Password" required>
             </div>
 
+            <!-- Login button -->
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Login</button>
             </div>
 
+            <!-- Resend verification link -->
             <div class="form-group">
-                <p style="text-align:center; margin-top:15px;">
-                    Haven't verified your email?
-                    <a href="{{ url_for('show_resend_verification') }}">
-                        Resend verification email
-                    </a>
-                </p>
+                <p style="text-align:center; margin-top:15px;">Haven't verified your email?<a href="{{ url_for('show_resend_verification') }}">Resend verification email</a></p>
             </div>
 
         </form>
     </div>
-    
 </div>
+
 {% endblock %}

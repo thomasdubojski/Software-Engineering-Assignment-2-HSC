@@ -12,26 +12,31 @@
         <form id='create_account' action='/create-account' method='POST' enctype='multipart/form-data'>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         
+        <!-- Username -->
         <div class="form-group">
             <label for='username'>Username:</label>
             <input type='text' id='username' name='username' required><br><br>
         </div>
 
+        <!-- Email -->
         <div class="form-group">
             <label for='email'>Email:</label>
             <input type='text' id='email' name='email' required><br><br>
         </div>
         
+        <!-- Password -->
         <div class="form-group">
             <label for='password'>Password:</label>
             <input type='password' id='password' name='password' required><br><br>
         </div>
 
+        <!-- Password confirmation -->
         <div class="form-group">
             <label for='confirmPassword'>Confirm Password:</label>
             <input type='password' id='confirmPassword' name='confirmPassword' required><br><br>
         </div>
 
+        <!-- Submit button -->
         <div class="form-group">
             <button type='submit' class="btn btn-primary">Create Account</button>
         </div>
@@ -39,4 +44,5 @@
         </form>
     </div>
 </div>
+
 {% endblock %}

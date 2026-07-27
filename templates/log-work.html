@@ -3,11 +3,12 @@
 {% block title %}Calendar{% endblock %}
 
 {% block content %}
-<div form-container>
+<div form-container>   
     <div class="form-card">
 
         <h2>Log Study Session</h2>
 
+        <!-- Live study tracker -->
         <h3>Live Timer</h3>
 
         <div id="timer">
@@ -22,52 +23,43 @@
 
         <hr>
 
+        <!-- Manual study entry -->
         <h3>Manual Entry</h3>
 
         <form action="/log-work/{{ assignment.id }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-        <label>
-
-        Start
-
-        </label>
-
+        <!-- Start date + time -->
+        <label>Start</label>
         <div class="form-group">
             <input type="datetime-local" name="start">
         </div>
 
+        <!-- End date + time -->
         <label> End </label>
-
         <div class="form-group">
             <input type="datetime-local" name="end">
         </div>
 
+        <!-- Study category -->
         <label> Category </label>
-
         <div class="form-group">
             <select name="category">
-
             <option>Research</option>
             <option>Writing</option>
             <option>Revision</option>
             <option>Reading</option>
-
             </select>
-
         </div>
             
-            <label> Notes </label>
-
+        <!-- Study notes -->
+        <label> Notes </label>
         <div class="form-group">
-            <textarea name="notes">
-            </textarea>
+            <textarea name="notes"></textarea>
         </div>
 
-
-        <button type="submit" class="btn btn-secondary">
-        Save Session
-        </button>
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-secondary">Save Session</button>
 
         </form>
     </div>
@@ -76,6 +68,7 @@
         
 <script>
 
+/* Live timer function */
 let startTime;
 
 let interval;

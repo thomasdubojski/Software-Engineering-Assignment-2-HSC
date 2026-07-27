@@ -1,4 +1,4 @@
-# importing required add-ons
+# Required imports
 from itsdangerous import URLSafeTimedSerializer
 from flask import Flask, request, render_template, redirect, url_for, send_from_directory
 from flask import session, flash, abort, jsonify
@@ -13,15 +13,17 @@ import flask_mail
 import secrets
 import os
 
-# creating engine for site
+# Engine for site
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev_key")
 
+# Setting CSRF variable for route security
 csrf = CSRFProtect(app)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///assignment_logbook.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATION"] = False
 
+# File upload organisation
 UPLOAD_FOLDER = "static/uploads/wallpapers"
 
 app.config["UPLOAD_FOLDER"] = os.path.join(
@@ -35,6 +37,9 @@ os.makedirs(
     app.config["UPLOAD_FOLDER"],
     exist_ok=True
 )
+
+# Setting serializer variable
+serializer = URLSafeTimedSerializer(app.secret_key)
 
 # Email Configuration
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -50,10 +55,11 @@ mail = flask_mail.Mail(app)
 
 db = SQLAlchemy(app)
 
-# =========================
+#-------
 # MODELS
-# =========================
+#-------
 
+# User DB model
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -67,7 +73,7 @@ class User(db.Model):
 
     assignments = db.relationship("Assignments", backref='student', lazy=True)
 
-
+# Assignments DB model
 class Assignments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
@@ -80,14 +86,9 @@ class Assignments(db.Model):
     created = db.Column(db.Date, default=datetime.utcnow)
     completed = db.Column(db.Boolean, default=False)
 
-    work_sessions = db.relationship(
-        "WorkSession",
-        backref="assignment",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )
+    work_sessions = db.relationship("WorkSession", backref="assignment", lazy=True, cascade="all, delete-orphan")
 
-
+# WorkSession DB model
 class WorkSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
@@ -100,7 +101,11 @@ class WorkSession(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+#-------------------
+# Defining functions
+#-------------------
 
+# Calculate priority function
 def calculate_priority(due_date):
     today = datetime.utcnow().date()
     days_left = (due_date - today).days
@@ -115,60 +120,35 @@ def calculate_priority(due_date):
         return 2
     return 1
 
-
+# Study sessions time function
 def total_minutes(assignment):
     return sum(s.duration for s in assignment.work_sessions)
-
 
 def total_hours(assignment):
     return round(total_minutes(assignment) / 60, 2)
 
+
+#-------------------
+# Core app functions
+#-------------------
+
+# Base
 @app.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
     return render_template('base.html', page=page)
 
+# Service worker route setting
 @app.route("/service-worker.js")
 def service_worker():
-    return send_from_directory(
-        "static",
-        "service-worker.js",
-        mimetype="application/javascript"
-    )
+    return send_from_directory("static", "service-worker.js", mimetype="application/javascript")
 
-@app.route('/login', methods=['GET'])
-def show_form_login():
-    return render_template('login.html')
-
-@app.route('/offline')
-def offline():
-    return render_template('offline.html')
-
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.form['username']
-    password = request.form['password']
-
-    user = User.query.filter_by(username=username).first()
-
-    if user and check_password_hash(user.passwordhash, password):
-
-        if not user.verified:
-            flash("Please verify your email before logging in.", "error")
-            return redirect(url_for("show_form_login"))
-
-        session['user_id'] = user.user_id
-        session['username'] = user.username
-        return redirect(url_for('home'))
-
-    flash("Invalid credentials.", "error")
-    return redirect(url_for("show_form_login"))
-
+# Create account template loading
 @app.route('/create-account', methods=['GET'])
 def show_form_create_account():
     return render_template('create-account.html')
 
-
+# Create account function
 @app.route('/create-account', methods=['POST'])
 def create_account():
     username = request.form['username'].strip()
@@ -199,13 +179,37 @@ def create_account():
 
     send_verification_email(new_user)
 
-    flash(
-        "Account created! Check your email to verify your account.",
-        "success"
-    )
+    flash("Account created! Check your email to verify your account.", "success")
 
     return redirect(url_for('show_form_login'))
 
+# Login template loading
+@app.route('/login', methods=['GET'])
+def show_form_login():
+    return render_template('login.html')
+
+# Login function
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.passwordhash, password):
+
+        if not user.verified:
+            flash("Please verify your email before logging in.", "error")
+            return redirect(url_for("show_form_login"))
+
+        session['user_id'] = user.user_id
+        session['username'] = user.username
+        return redirect(url_for('home'))
+
+    flash("Invalid credentials.", "error")
+    return redirect(url_for("show_form_login"))
+
+# Email verification function
 @app.route("/verify/<token>")
 def verify_email(token):
 
@@ -214,35 +218,33 @@ def verify_email(token):
     if not email:
         return "Verification link expired or invalid", 400
 
-
-    user = User.query.filter_by(
-        email=email
-    ).first()
-
+    user = User.query.filter_by(email=email).first()
 
     if not user:
         return "User not found", 404
-
 
     user.verified = True
 
     db.session.commit()
 
-
-    flash(
-        "Email verified successfully. You can now login.",
-        "success"
-    )
-
-
+    flash("Email verified successfully. You can now login.", "success")
     return redirect(url_for("show_form_login"))
 
 
+#----------------
+# Assignment CRUD
+#----------------
+
+#--------------------
+# Assignment creation
+#--------------------
+
+# Add assignment template loading
 @app.route('/add-assignment', methods=['GET'])
 def show_form_add_assignment():
     return render_template('add-assignment.html')
 
-
+# Add assignment function
 @app.route('/add-assignment', methods=['POST'])
 def add_assignment():
     if 'user_id' not in session:
@@ -260,7 +262,7 @@ def add_assignment():
 
     due_date_obj = datetime.strptime(dueDate, "%Y-%m-%d").date()
 
-    # AUTO PRIORITY CALCULATION
+    # Calculation to apply priority class automatically
     priority_value = calculate_priority(due_date_obj)
 
     new_assignment = Assignments(
@@ -280,14 +282,51 @@ def add_assignment():
     flash("Assignment added successfully!", "success")
     return redirect(url_for('home'))
 
+
+#--------------------------------
+# Assignment editing and updating
+#--------------------------------
+
+# Complete assignment function
+@app.route('/complete-assignment/<int:id>', methods=['POST'])
+def complete_assignment(id):
+    if 'user_id' not in session:
+        return jsonify({"success": False}), 401
+
+    assignment = Assignments.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
+
+    assignment.completed = True
+    db.session.commit()
+
+    return jsonify({"success": True})
+
+# Delete assignment function
+@app.route("/delete-assignment/<int:id>", methods=["POST"])
+def delete_assignment(id):
+    if 'user_id' not in session:
+        return jsonify({"success": False}), 401
+
+    flash("Are you sure you want to delete this assignment? This action cannot be undone.", "warning")
+
+    assignment = Assignments.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
+
+    db.session.delete(assignment)
+    db.session.commit()
+
+    return jsonify({"success": True})
+
+
+#---------------------------
+# Assignment reading/viewing
+#---------------------------
+
+# Assignment calendar function and template loading
 @app.route("/calendar")
 def calendar():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignments = Assignments.query.filter_by(
-        user_id=session['user_id']
-    ).all()
+    assignments = Assignments.query.filter_by(user_id=session['user_id'] ).all()
 
     data = []
 
@@ -298,22 +337,14 @@ def calendar():
             "title": a.course,
             "subject": a.course,
             "type": a.type,
-            "start": (datetime.combine(a.due, a.due_time).isoformat()
-                if a.due_time
-                else a.due.strftime("%Y-%m-%d")
-            ),
+            "start": (datetime.combine(a.due, a.due_time).isoformat()if a.due_time else a.due.strftime("%Y-%m-%d")),
             "priority": a.priority,
             "completed": a.completed,
             "notes": a.notes,
             "overdue": a.due < datetime.utcnow().date() if a.due else False
         })
 
-    sessions = WorkSession.query.join(
-        Assignments,
-        WorkSession.assignment_id == Assignments.id
-    ).filter(
-        Assignments.user_id == session["user_id"]
-    ).all()
+    sessions = WorkSession.query.join(Assignments, WorkSession.assignment_id == Assignments.id).filter(Assignments.user_id == session["user_id"]).all()
 
     for s in sessions:
         data.append({
@@ -327,19 +358,15 @@ def calendar():
             "notes": s.notes or ""
         })
 
-    return render_template(
-        "calendar.html",
-        assignments=data
-    )
+    return render_template("calendar.html", assignments=data)
 
+# Assignment dashboard function and template loading
 @app.route("/assignment-dashboard")
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignments = Assignments.query.filter_by(
-        user_id=session['user_id']
-    ).all()
+    assignments = Assignments.query.filter_by(user_id=session['user_id']).all()
 
     data = [{
         "id": a.id,
@@ -360,100 +387,55 @@ def dashboard():
 
     return render_template("assignment-dashboard.html", assignments=data, user=User.query.get(session["user_id"]))
 
-
-@app.route('/complete-assignment/<int:id>', methods=['POST'])
-def complete_assignment(id):
-    if 'user_id' not in session:
-        return jsonify({"success": False}), 401
-
-    assignment = Assignments.query.filter_by(
-        id=id,
-        user_id=session['user_id']
-    ).first_or_404()
-
-    assignment.completed = True
-    db.session.commit()
-
-    return jsonify({"success": True})
+@app.route('/offline')
+def offline():
+    return render_template('offline.html')
 
 
+#---------------------------------------
+# Study sessions, statistics and history
+#---------------------------------------
 
-@app.route("/delete-assignment/<int:id>", methods=["POST"])
-def delete_assignment(id):
-    if 'user_id' not in session:
-        return jsonify({"success": False}), 401
-
-    flash("Are you sure you want to delete this assignment? This action cannot be undone.", "warning")
-
-    assignment = Assignments.query.filter_by(
-        id=id,
-        user_id=session["user_id"]
-    ).first_or_404()
-
-    db.session.delete(assignment)
-    db.session.commit()
-
-    return jsonify({"success": True})
-
+# Study session history function and template loading
 @app.route("/assignment/<int:id>")
 def assignment_history(id):
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignment = Assignments.query.filter_by(
-        id=id,
-        user_id=session["user_id"]
-    ).first_or_404()
+    assignment = Assignments.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 
-    sessions = WorkSession.query.filter_by(
-        assignment_id=id
-    ).order_by(WorkSession.start_time.desc()).all()
+    sessions = WorkSession.query.filter_by(assignment_id=id).order_by(WorkSession.start_time.desc()).all()
 
-    return render_template(
-        "assignment-history.html",
-        assignment=assignment,
-        sessions=sessions,
-        total=total_hours(assignment)
-    )
+    return render_template("assignment-history.html", assignment=assignment, sessions=sessions, total=total_hours(assignment))
 
-
+# Study statistics function and template loading
 @app.route("/study-statistics")
 def study_statistics():
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignments = Assignments.query.filter_by(
-        user_id=session["user_id"]
-    ).all()
+    assignments = Assignments.query.filter_by(user_id=session["user_id"]).all()
 
     total = sum(total_minutes(a) for a in assignments)
     sessions = sum(len(a.work_sessions) for a in assignments)
     completed = sum(1 for a in assignments if a.completed)
 
-    return render_template(
-    "study-statistics.html",
-    assignments=assignments,
-    total_hours=round(total / 60, 2),
-    total_sessions=sessions,
-    completed_assignments=completed
-    )
+    return render_template("study-statistics.html", assignments=assignments, total_hours=round(total / 60, 2), total_sessions=sessions, completed_assignments=completed)
 
+# Show log work function and template loading
 @app.route("/log-work/<int:assignment_id>", methods=["GET"])
 def show_log_work(assignment_id):
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignment = Assignments.query.filter_by(
-        id=assignment_id,
-        user_id=session["user_id"]
-    ).first_or_404()
+    assignment = Assignments.query.filter_by(id=assignment_id, user_id=session["user_id"]).first_or_404()
 
     return render_template("log-work.html", assignment=assignment)
 
-
+# Log work function and template loading
 @app.route("/log-work/<int:assignment_id>", methods=["POST"])
 def log_work(assignment_id):
 
@@ -476,16 +458,19 @@ def log_work(assignment_id):
 
     return redirect(url_for("assignment_history", id=assignment_id))
 
+
+#---------------------------------------
+# Export assignment to external calendar
+#---------------------------------------
+
+# Export as .ics file
 @app.route("/export-calendar/<int:assignment_id>")
 def export_calendar(assignment_id):
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignment = Assignments.query.filter_by(
-        id=assignment_id,
-        user_id=session["user_id"]
-    ).first_or_404()
+    assignment = Assignments.query.filter_by(id=assignment_id, user_id=session["user_id"]).first_or_404()
 
     due = assignment.due.strftime("%Y%m%d")
 
@@ -502,25 +487,19 @@ DTEND;VALUE=DATE:{due}
 END:VEVENT
 END:VCALENDAR"""
 
-    response = app.response_class(
-        response=ics_content,
-        mimetype="text/calendar"
-    )
+    response = app.response_class(response=ics_content, mimetype="text/calendar")
 
     response.headers["Content-Disposition"] = f"attachment; filename=assignment_{assignment.id}.ics"
     return response
 
-
+# Export to google calendar
 @app.route("/google-calendar/<int:assignment_id>")
 def google_calendar(assignment_id):
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    assignment = Assignments.query.filter_by(
-        id=assignment_id,
-        user_id=session["user_id"]
-    ).first_or_404()
+    assignment = Assignments.query.filter_by(id=assignment_id, user_id=session["user_id"]).first_or_404()
 
     start = assignment.due.strftime("%Y%m%d")
 
@@ -535,79 +514,35 @@ def google_calendar(assignment_id):
     return redirect(url)
 
 
-@app.route("/settings")
-def settings():
+#-------------------
+# Email Verification
+#-------------------
 
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    user = User.query.get(session['user_id'])
-    return render_template("settings.html", user=user)
-
-
-@app.route("/test-email")
-def test_email():
-
-    msg = flask_mail.Message(
-        subject="Assignment Centre Test",
-        recipients=["bhc.assignment.tracker@gmail.com"]
-    )
-
-    msg.body = """
-Congratulations!
-
-Your Assignment Centre email system is working correctly.
-
-This email was sent using Flask-Mail.
-"""
-
-    mail.send(msg)
-
-    return "Email sent successfully!"
-
-serializer = URLSafeTimedSerializer(app.secret_key)
-
-
+# Verification token functions
 def generate_verification_token(email):
 
-    return serializer.dumps(
-        email,
-        salt="email-verification"
-    )
-
+    return serializer.dumps(email, salt="email-verification")
 
 def confirm_verification_token(token, expiration=3600):
 
     try:
-        email = serializer.loads(
-            token,
-            salt="email-verification",
-            max_age=expiration
-        )
-
+        email = serializer.loads(token, salt="email-verification", max_age=expiration)
         return email
 
     except Exception:
         return None
 
+# Send verification email function
 def send_verification_email(user):
 
     token = generate_verification_token(user.email)
 
-    link = url_for(
-        "verify_email",
-        token=token,
-        _external=True
-    )
+    link = url_for("verify_email", token=token, _external=True)
 
-
-    msg = flask_mail.Message(
-        "Verify your Assignment Centre account",
-        recipients=[user.email]
-    )
-
+    msg = flask_mail.Message("Verify your Assignment Centre account", recipients=[user.email])
 
     msg.body = f"""
+
 Hi {user.username},
 
 Welcome to Assignment Centre!
@@ -621,14 +556,14 @@ This link expires in 1 hour.
 Thanks,
 Assignment Centre
 """
-
-
     mail.send(msg)
 
+# Resend verification email template loading
 @app.route("/resend-verification")
 def show_resend_verification():
     return render_template("resend-verification.html")
 
+# Resend verification email function
 @app.route("/resend-verification", methods=["POST"])
 def resend_verification():
 
@@ -646,16 +581,26 @@ def resend_verification():
 
     send_verification_email(user)
 
-    flash(
-        "A new verification email has been sent.",
-        "success"
-    )
+    flash("A new verification email has been sent.", "success")
 
     return redirect(url_for("show_form_login"))
 
-# Settings routes
 
-# Update email
+#---------
+# Settings
+#---------
+
+# Settings template loading
+@app.route("/settings")
+def settings():
+
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    return render_template("settings.html", user=user)
+
+# Update email function
 @app.route("/update-email", methods=["POST"])
 def update_email():
 
@@ -666,15 +611,10 @@ def update_email():
 
     new_email = request.form["new_email"].strip().lower()
 
-    existing = User.query.filter_by(
-        email=new_email
-    ).first()
+    existing = User.query.filter_by(email=new_email).first()
 
     if existing:
-        flash(
-            "That email address is already being used.",
-            "error"
-        )
+        flash("That email address is already being used.", "error")
         return redirect(url_for("settings"))
 
     user.email = new_email
@@ -682,38 +622,26 @@ def update_email():
 
     db.session.commit()
 
-    flash(
-        "Email updated. Please verify your new email address.",
-        "success"
-    )
+    flash("Email updated. Please verify your new email address.", "success")
 
     send_verification_email(user)
 
     return redirect(url_for("settings"))
 
-# Add/Update wallpaper
+# Add/Update wallpaper function
 @app.route("/update-wallpaper", methods=["POST"])
 def update_wallpaper():
 
     if "user_id" not in session:
         return redirect(url_for("login"))
 
-
-    user = User.query.get(
-        session["user_id"]
-    )
-
+    user = User.query.get(session["user_id"])
 
     file = request.files.get("wallpaper")
 
-
     if not file or file.filename == "":
-        flash(
-            "No file selected.",
-            "error"
-        )
+        flash("No file selected.", "error")
         return redirect(url_for("settings"))
-
 
     extension = file.filename.rsplit(".", 1)[1].lower()
 
@@ -722,59 +650,33 @@ def update_wallpaper():
         f"{uuid.uuid4().hex}.{extension}"
     )
 
-
-    filepath = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        filename
-    )
-
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
 
     file.save(filepath)
 
-
     user.wallpaper = filename
-
-    user.wallpaper_opacity = float(
-        request.form.get(
-            "opacity",
-            0.4
-        )
-    )
 
     db.session.commit()
 
-
-    flash(
-        "Wallpaper updated successfully.",
-        "success"
-    )
-
+    flash("Wallpaper updated successfully.", "success")
 
     return redirect(url_for("settings"))
 
-# Reset wallpaper
+# Reset wallpaper function
 @app.route("/reset-wallpaper", methods=["POST"])
 def reset_wallpaper():
 
-    user=User.query.get(
-    session["user_id"]
-    )
+    user=User.query.get(session["user_id"])
 
     user.wallpaper="default.jpg"
 
     db.session.commit()
 
+    flash("Wallpaper reset", "success")
 
-    flash(
-    "Wallpaper reset",
-    "success"
-    )
+    return redirect(url_for("settings"))
 
-    return redirect(
-    url_for("settings")
-    )
-
-# Change password
+# Change password function
 @app.route("/change-password", methods=["POST"])
 def change_password():
 
@@ -787,38 +689,27 @@ def change_password():
     new = request.form["new_password"]
     confirm = request.form["confirm_password"]
 
-
     if not check_password_hash(
         user.passwordhash,
         current
     ):
-        flash(
-            "Current password is incorrect.",
-            "error"
-        )
+        flash("Current password is incorrect.", "error")
         return redirect(url_for("settings"))
 
 
     if new != confirm:
-        flash(
-            "New passwords do not match.",
-            "error"
-        )
+        flash("New passwords do not match.", "error")
         return redirect(url_for("settings"))
-
 
     user.passwordhash = generate_password_hash(new)
 
     db.session.commit()
 
-    flash(
-        "Password updated successfully.",
-        "success"
-    )
+    flash("Password updated successfully.", "success")
 
     return redirect(url_for("settings"))
 
-# Delete account
+# Delete account function
 @app.route("/delete-account", methods=["POST"])
 def delete_account():
 
@@ -827,30 +718,24 @@ def delete_account():
 
     user = User.query.get(session["user_id"])
 
-    flash(
-        "Are you sure you want to delete your account? This action cannot be undone.",
-        "warning"
-    )
+    flash("Are you sure you want to delete your account? This action cannot be undone.", "warning")
 
     db.session.delete(user)
     db.session.commit()
 
     session.clear()
 
-    flash(
-        "Your account has been deleted.",
-        "success"
-    )
+    flash("Your account has been deleted.", "success")
 
     return redirect(url_for("home"))
 
+# Logout function
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
 
-
-
+# Create DB if not found function
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

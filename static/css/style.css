@@ -296,7 +296,7 @@ td {
 }
 
 .card {
-  background:rgba(255, 255, 255, 0.266);
+  background:rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
   border-radius: 15px;
   padding: 15px;
@@ -730,6 +730,27 @@ input:focus, textarea:focus {
     border-radius: 999px;
     font-size: 10px;
     font-weight: 700;
+}
+
+.complete-bubble,
+.complete-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    background: #2ecc7083;
+    color: #2ecc71;
+
+    padding: 4px 10px;
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.complete-pill {
+    font-size: 10px;
+    padding: 3px 8px;
 }
 
 .session-bubble .bubble-sub {

@@ -100,6 +100,7 @@ class WorkSession(db.Model):
     created = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+
 def calculate_priority(due_date):
     today = datetime.utcnow().date()
     days_left = (due_date - today).days
@@ -302,6 +303,7 @@ def calendar():
                 else a.due.strftime("%Y-%m-%d")
             ),
             "priority": a.priority,
+            "completed": a.completed,
             "notes": a.notes,
             "overdue": a.due < datetime.utcnow().date() if a.due else False
         })
@@ -381,6 +383,8 @@ def delete_assignment(id):
     if 'user_id' not in session:
         return jsonify({"success": False}), 401
 
+    flash("Are you sure you want to delete this assignment? This action cannot be undone.", "warning")
+
     assignment = Assignments.query.filter_by(
         id=id,
         user_id=session["user_id"]
@@ -426,12 +430,14 @@ def study_statistics():
 
     total = sum(total_minutes(a) for a in assignments)
     sessions = sum(len(a.work_sessions) for a in assignments)
+    completed = sum(1 for a in assignments if a.completed)
 
     return render_template(
-        "study-statistics.html",
-        assignments=assignments,
-        total_hours=round(total / 60, 2),
-        total_sessions=sessions
+    "study-statistics.html",
+    assignments=assignments,
+    total_hours=round(total / 60, 2),
+    total_sessions=sessions,
+    completed_assignments=completed
     )
 
 @app.route("/log-work/<int:assignment_id>", methods=["GET"])

@@ -21,6 +21,11 @@
         <p>Avg Hours / Day</p>
     </div>
 
+    <div class="stats-card">
+        <h2>{{ completed_assignments }}</h2>
+        <p>Completed Assignments</p>
+    </div>
+
 </div>
 
 <hr>
@@ -62,7 +67,11 @@
 
     <li>
         Average session length:
-        {{ (total_hours * 60 / total_sessions) | round(1) }} min
+        {% if total_sessions > 0 %}
+    {{ (total_hours * 60 / total_sessions) | round(1) }} min
+    {% else %}
+        0 min
+    {% endif %}
     </li>
 
 </ul>

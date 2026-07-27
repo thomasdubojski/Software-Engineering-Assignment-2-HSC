@@ -55,29 +55,38 @@ function openModal(a) {
     const modal = document.getElementById("modal");
     if (!modal) return;
 
+    const overdueEl = document.getElementById("modalOverdue");
 
+    if (overdueEl) {
+        if (!a.completed && a.overdue) {
+            overdueEl.innerHTML = `${icon("warning")} OVERDUE`;
+            overdueEl.style.display = "inline-flex";
+        } else {
+            overdueEl.innerHTML = "";
+            overdueEl.style.display = "none";
+        }
+    }
 
-    document.getElementById("modalTitle").innerText = a.title || "";
-    document.getElementById("modalSubject").innerText = a.subject || "";
-    document.getElementById("modalType").innerText = a.type || "";
-    document.getElementById("modalDue").innerText = formatDate(a.dueDate);
+document.getElementById("modalTitle").innerText = a.title || "";
+document.getElementById("modalSubject").innerText = a.subject || "";
+document.getElementById("modalType").innerText = a.type || "";
+document.getElementById("modalDue").innerText = formatDate(a.dueDate);
 
-    const priorityEl = document.getElementById("modalPriority");
-    if (priorityEl) {
+const priorityEl = document.getElementById("modalPriority");
+
+if (priorityEl) {
+    if (a.completed) {
+        priorityEl.innerHTML = `${icon("check_circle")} COMPLETED`;
+        priorityEl.className = "complete-bubble";
+    } else {
         priorityEl.innerText = getPriorityLabel(a.priority);
         priorityEl.className =
             "priority-bubble " + getPriorityClass(a.priority);
     }
+}
 
-    document.getElementById("modalNotes").innerText =
-        a.notes || "No notes provided.";
-
-    const overdueEl = document.getElementById("modalOverdue");
-    if (overdueEl) {
-        overdueEl.innerHTML = a.overdue
-            ? `${icon("warning")} OVERDUE`
-            : '';
-    }
+document.getElementById("modalNotes").innerText =
+    a.notes || "No notes provided.";
 
     setTimeout(() => {
         const historyLink = document.getElementById("historyLink");
@@ -154,11 +163,19 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>Subject:</strong> ${a.subject}</p>
             <p><strong>Due:</strong> ${a.dueDate}</p>
 
-            <span class="priority-bubble ${getPriorityClass(a.priority)}">
-                ${getPriorityLabel(a.priority)}
-            </span>
+            ${a.completed
+                ? `<span class="complete-bubble">${icon("check_circle")} COMPLETED</span>`
+                : `
+                    <span class="priority-bubble ${getPriorityClass(a.priority)}">
+                        ${getPriorityLabel(a.priority)}
+                    </span>
 
-            ${a.overdue ? `<span class="overdue-bubble">${icon("warning")} OVERDUE</span>` : ""}
+                    ${a.overdue
+                        ? `<span class="overdue-bubble">${icon("warning")} OVERDUE</span>`
+                        : ""
+                    }
+                `
+            }
 
             <div class="card-actions">
 
@@ -199,9 +216,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.querySelector(".delete-btn-card").addEventListener("click", async (e) => {
             e.stopPropagation();
-
-            const confirmDelete = confirm("Delete this assignment?");
-            if (!confirmDelete) return;
 
             const res = await fetch(`/delete-assignment/${a.id}`, {
                 method: "POST",
@@ -301,7 +315,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const response = await fetch(
                 `/complete-assignment/${selectedAssignment.id}`,
-                { method: "POST" }
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    }
+                }
             );
 
             const result = await response.json();
@@ -415,6 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: info.event.extendedProps.type,
                 dueDate: info.event.start,
                 priority: info.event.extendedProps.priority,
+                completed: info.event.extendedProps.completed,
                 notes: info.event.extendedProps.notes,
                 overdue: info.event.extendedProps.overdue
             };
@@ -452,11 +472,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         <div class="bubble-row">
 
-                            <span class="priority-pill ${getPriorityClass(info.event.extendedProps.priority)}">
-                                ${getPriorityLabel(info.event.extendedProps.priority)}
-                            </span>
+                            ${info.event.extendedProps.completed
+                                ? `<span class="complete-pill">${icon("check_circle")} COMPLETED</span>`
+                                : `
+                                    <span class="priority-pill ${getPriorityClass(info.event.extendedProps.priority)}">
+                                        ${getPriorityLabel(info.event.extendedProps.priority)}
+                                    </span>
 
-                            ${info.event.extendedProps.overdue ? `<span class="overdue-pill">${icon("warning")} OVERDUE</span>` : ""}
+                                    ${info.event.extendedProps.overdue
+                                        ? `<span class="overdue-pill">${icon("warning")} OVERDUE</span>`
+                                        : ""
+                                    }
+                                `
+                            }
 
                         </div>
 

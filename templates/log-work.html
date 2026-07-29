@@ -113,13 +113,28 @@ function stopTimer(){
 
     form.action=window.location.pathname;
 
+    const csrf = document.createElement("input");
+
+    csrf.type = "hidden";
+
+    csrf.name = "csrf_token";
+
+    csrf.value = document.querySelector('meta[name="csrf-token"]').content;
+
+    form.appendChild(csrf);
+
     let start=document.createElement("input");
 
     start.type="hidden";
 
     start.name="start";
 
-    start.value=startTime.toISOString().slice(0,16);
+    start.value =
+        startTime.getFullYear() + "-" +
+        String(startTime.getMonth() + 1).padStart(2, "0") + "-" +
+        String(startTime.getDate()).padStart(2, "0") + "T" +
+        String(startTime.getHours()).padStart(2, "0") + ":" +
+        String(startTime.getMinutes()).padStart(2, "0");
 
     let end=document.createElement("input");
 
@@ -127,7 +142,14 @@ function stopTimer(){
 
     end.name="end";
 
-    end.value=new Date().toISOString().slice(0,16);
+    const endTime = new Date();
+
+    end.value =
+        endTime.getFullYear() + "-" +
+        String(endTime.getMonth() + 1).padStart(2, "0") + "-" +
+        String(endTime.getDate()).padStart(2, "0") + "T" +
+        String(endTime.getHours()).padStart(2, "0") + ":" +
+        String(endTime.getMinutes()).padStart(2, "0");
 
     form.appendChild(start);
 

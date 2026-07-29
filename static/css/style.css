@@ -309,7 +309,8 @@ Modal card styling
 ----------------*/
 
 .card {
-  background:rgba(255, 255, 255, 0.1);
+  background:rgba(255, 255, 255, 0.2);
+  color: rgb(218, 209, 209);
   backdrop-filter: blur(8px);
   border-radius: 15px;
   padding: 15px;
@@ -390,8 +391,8 @@ Generic button styling
 }
 
 .btn-iconEdit {
-  background: #0099ffb7;
-  color: #005a96;
+  background: rgba(0, 153, 255, 0.2);
+  color: rgb(0, 153, 255);
   justify-content: center;
 }
 
@@ -400,8 +401,8 @@ Generic button styling
 }
 
 .btn-iconComplete {
-  background: #00de3f;
-  color: #00913c;
+  background: rgba(0, 222, 63, 0.2);
+  color: rgb(0, 255, 21);
   justify-content: center;
 }
 
@@ -410,9 +411,13 @@ Generic button styling
 }
 
 .btn-iconDelete {
-  background: #cd0000;
-  color: #7d0000;
+  background: rgba(205, 0, 0, 0.2);
+  color: rgb(255, 0, 0);
   justify-content: center;
+}
+
+.btn-iconDelete:hover {
+  background: #d1d5db;
 }
 
 .settingsBtn {
@@ -870,12 +875,6 @@ Dark mode styling
 
 .dark-mode {
     background:#121212;
-    color:white;
-}
-
-
-.dark-mode .form-card {
-    background:#1e1e1e;
     color:white;
 }
 

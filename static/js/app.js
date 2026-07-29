@@ -152,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const dashboard = document.getElementById("dashboard");
     const modal = document.getElementById("modal");
-
     const assignments = window.assignments || [];
 
     function renderCards() {
@@ -260,6 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const appleCalendarBtn = document.getElementById("appleCalendarBtn");
     const googleCalendarBtn = document.getElementById("googleCalendarBtn");
     const historyBtn = document.getElementById("historyBtn");
+    const logStudyBtn = document.getElementById("logStudyBtn");
     const deleteBtn = document.getElementById("deleteBtn");
 
     if (deleteBtn) {
@@ -281,6 +281,15 @@ document.addEventListener("DOMContentLoaded", () => {
             if (result.success) {
                 location.reload();
             }
+        });
+    }
+
+    if (logStudyBtn) {
+        logStudyBtn.addEventListener("click", () => {
+            if (!selectedAssignment) return;
+
+            window.location.href =
+                `/log-work/${selectedAssignment.id}`;
         });
     }
 

@@ -280,7 +280,7 @@ def add_assignment():
     db.session.commit()
 
     flash("Assignment added successfully!", "success")
-    return redirect(url_for('home'))
+    return redirect(url_for('dashboard'))
 
 
 #--------------------------------
@@ -299,6 +299,49 @@ def complete_assignment(id):
     db.session.commit()
 
     return jsonify({"success": True})
+
+@app.route('/edit-assignment/<int:id>', methods=['GET', 'POST'])
+def edit_assignment(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    assignment = Assignments.query.filter_by(
+        id=id,
+        user_id=session['user_id']
+    ).first_or_404()
+
+    if request.method == 'POST':
+
+        assignment.type = request.form.get('assignment_type', '').strip()
+        assignment.course = request.form.get('course', '').strip()
+        assignment.notes = request.form.get('assignmentNotes', '').strip()
+
+        due_date = request.form.get('due_date', '').strip()
+        due_time = request.form.get('due_time', '').strip()
+
+        if due_date:
+            assignment.due = datetime.strptime(
+                due_date,
+                "%Y-%m-%d"
+            ).date()
+
+        assignment.due_time = (
+            datetime.strptime(due_time, "%H:%M").time()
+            if due_time else None
+        )
+
+        # Recalculate priority after changing due date
+        assignment.priority = calculate_priority(assignment.due)
+
+        db.session.commit()
+
+        flash("Assignment updated successfully!", "success")
+        return redirect(url_for('dashboard'))
+
+    return render_template(
+        "edit-assignment.html",
+        assignment=assignment
+    )
 
 # Delete assignment function
 @app.route("/delete-assignment/<int:id>", methods=["POST"])
@@ -374,6 +417,7 @@ def dashboard():
         "subject": a.course,
         "type": a.type,
         "dueDate": a.due.strftime("%Y-%m-%d") if a.due else "",
+        "dueTime": a.due_time.strftime("%H:%M") if a.due_time else "",
         "priority": a.priority,
         "notes": a.notes or "",
         "completed": a.completed,

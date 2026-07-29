@@ -1,0 +1,395 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Assignment{% endblock %}
+
+{% block heading %}Edit an Assignment{% endblock %}
+
+{% block text %}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+
+    <div class="form-card">
+
+        <h1 class="Title">Edit Assignment</h1>
+
+        <form id="assignment-form" action="/edit-assignment/{{ assignment.id }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Assignment type dropdown -->
+            <label for="assignment_type">Assignment Type:</label>
+            <div class="form-group">
+                <select name="assignment_type" id="assignment_type" required>
+                    <option class="heading-option" value="">Select an assignment type</option>
+
+                    <option value="Take Home Assignment - Essay/Paper"
+                    {% if assignment.type == "Take Home Assignment - Essay/Paper" %}selected{% endif %}>
+                        Take Home Assignment - Essay/Paper
+                    </option>
+
+                    <option value="Take Home Assignment - Presentation/Speech"
+                    {% if assignment.type == "Take Home Assignment - Presentation/Speech" %}selected{% endif %}>
+                        Take Home Assignment - Presentation/Speech
+                    </option>
+
+                    <option value="Take Home Assignment - Practical"
+                    {% if assignment.type == "Take Home Assignment - Practical" %}selected{% endif %}>
+                        Take Home Assignment - Practical
+                    </option>
+
+                    <option value="Take Home Assignment - Practical and Report"
+                    {% if assignment.type == "Take Home Assignment - Practical and Report" %}selected{% endif %}>
+                        Take Home Assignment - Practical and Report
+                    </option>
+
+                    <option value="In Class Practical"
+                    {% if assignment.type == "In Class Practical" %}selected{% endif %}>
+                        In Class Practical
+                    </option>
+
+                    <option value="In Class Practical and Exam/Test"
+                    {% if assignment.type == "In Class Practical and Exam/Test" %}selected{% endif %}>
+                        In Class Practical and Exam/Test
+                    </option>
+
+                    <option value="In Class Practical and Report"
+                    {% if assignment.type == "In Class Practical and Report" %}selected{% endif %}>
+                        In Class Practical and Report
+                    </option>
+
+                    <option value="In Class Exam/Test"
+                    {% if assignment.type == "In Class Exam/Test" %}selected{% endif %}>
+                        In Class Exam/Test
+                    </option>
+
+                    <option value="Take Home Assignment and In Class Exam/Test"
+                    {% if assignment.type == "Take Home Assignment and In Class Exam/Test" %}selected{% endif %}>
+                        Take Home Assignment and In Class Exam/Test
+                    </option>
+
+                    <option value="Other Take Home Assignment"
+                    {% if assignment.type == "Other Take Home Assignment" %}selected{% endif %}>
+                        Other Take Home Assignment
+                    </option>
+
+                    <option value="Other In Class Assignment"
+                    {% if assignment.type == "Other In Class Assignment" %}selected{% endif %}>
+                        Other In Class Assignment
+                    </option>
+
+                    <option value="Other"
+                    {% if assignment.type == "Other" %}selected{% endif %}>
+                        Other
+                    </option>
+
+                </select>
+                <br><br>
+            </div>
+
+            <!-- Course Dropdown -->
+            <label for="course">Course:</label>
+            <div class="form-group">
+                <select name="course" id="course" required>
+                    <option class="heading-option" value="">Select a course</option>
+
+                    <!-- ENGLISH -->
+                    <option disabled>English Courses</option>
+                    <option value="Advanced English"
+                    {% if assignment.course == "Advanced English" %}selected{% endif %}>
+                        Advanced English
+                    </option>
+
+                    <option value="Standard English"
+                    {% if assignment.course == "Standard English" %}selected{% endif %}>
+                        Standard English
+                    </option>
+
+                    <option value="English Studies"
+                    {% if assignment.course == "English Studies" %}selected{% endif %}>
+                        English Studies
+                    </option>
+
+                    <option value="English Ext 1"
+                    {% if assignment.course == "English Ext 1" %}selected{% endif %}>
+                        English Ext 1
+                    </option>
+
+                    <option value="English Ext 2"
+                    {% if assignment.course == "English Ext 2" %}selected{% endif %}>
+                        English Ext 2
+                    </option>
+
+
+                    <!-- MATHEMATICS -->
+                    <option disabled>Mathematics Courses</option>
+
+                    <option value="Mathematics Advanced"
+                    {% if assignment.course == "Mathematics Advanced" %}selected{% endif %}>
+                        Mathematics Advanced
+                    </option>
+
+                    <option value="Mathematics Standard"
+                    {% if assignment.course == "Mathematics Standard" %}selected{% endif %}>
+                        Mathematics Standard
+                    </option>
+
+                    <option value="Mathematics Ext 1"
+                    {% if assignment.course == "Mathematics Ext 1" %}selected{% endif %}>
+                        Mathematics Ext 1
+                    </option>
+
+                    <option value="Mathematics Ext 2"
+                    {% if assignment.course == "Mathematics Ext 2" %}selected{% endif %}>
+                        Mathematics Ext 2
+                    </option>
+
+
+                    <!-- SCIENCE -->
+                    <option disabled>Science Courses</option>
+
+                    <option value="Biology"
+                    {% if assignment.course == "Biology" %}selected{% endif %}>
+                        Biology
+                    </option>
+
+                    <option value="Chemistry"
+                    {% if assignment.course == "Chemistry" %}selected{% endif %}>
+                        Chemistry
+                    </option>
+
+                    <option value="Earth & Environmental Science"
+                    {% if assignment.course == "Earth & Environmental Science" %}selected{% endif %}>
+                        Earth & Environmental Science
+                    </option>
+
+                    <option value="Investigating Science"
+                    {% if assignment.course == "Investigating Science" %}selected{% endif %}>
+                        Investigating Science
+                    </option>
+
+                    <option value="Physics"
+                    {% if assignment.course == "Physics" %}selected{% endif %}>
+                        Physics
+                    </option>
+
+
+                    <!-- HSIE -->
+                    <option disabled>HSIE Courses</option>
+
+                    <option value="Aboriginal Studies"
+                    {% if assignment.course == "Aboriginal Studies" %}selected{% endif %}>
+                        Aboriginal Studies
+                    </option>
+
+                    <option value="Ancient History"
+                    {% if assignment.course == "Ancient History" %}selected{% endif %}>
+                        Ancient History
+                    </option>
+
+                    <option value="Business Studies"
+                    {% if assignment.course == "Business Studies" %}selected{% endif %}>
+                        Business Studies
+                    </option>
+
+                    <option value="Economics"
+                    {% if assignment.course == "Economics" %}selected{% endif %}>
+                        Economics
+                    </option>
+
+                    <option value="Geography"
+                    {% if assignment.course == "Geography" %}selected{% endif %}>
+                        Geography
+                    </option>
+
+                    <option value="Legal Studies"
+                    {% if assignment.course == "Legal Studies" %}selected{% endif %}>
+                        Legal Studies
+                    </option>
+
+                    <option value="Modern History"
+                    {% if assignment.course == "Modern History" %}selected{% endif %}>
+                        Modern History
+                    </option>
+
+                    <option value="Society & Culture"
+                    {% if assignment.course == "Society & Culture" %}selected{% endif %}>
+                        Society & Culture
+                    </option>
+
+
+                    <!-- TAS -->
+                    <option disabled>TAS Courses</option>
+
+                    <option value="Agriculture"
+                    {% if assignment.course == "Agriculture" %}selected{% endif %}>
+                        Agriculture
+                    </option>
+
+                    <option value="Design & Technology"
+                    {% if assignment.course == "Design & Technology" %}selected{% endif %}>
+                        Design & Technology
+                    </option>
+
+                    <option value="Hospitality"
+                    {% if assignment.course == "Hospitality" %}selected{% endif %}>
+                        Hospitality
+                    </option>
+
+                    <option value="Industrial Technology"
+                    {% if assignment.course == "Industrial Technology" %}selected{% endif %}>
+                        Industrial Technology
+                    </option>
+
+                    <option value="Primary Industries"
+                    {% if assignment.course == "Primary Industries" %}selected{% endif %}>
+                        Primary Industries
+                    </option>
+
+                    <option value="Software Engineering"
+                    {% if assignment.course == "Software Engineering" %}selected{% endif %}>
+                        Software Engineering
+                    </option>
+
+                    <option value="Textiles and Design"
+                    {% if assignment.course == "Textiles and Design" %}selected{% endif %}>
+                        Textiles and Design
+                    </option>
+
+
+                    <!-- CAPA -->
+                    <option disabled>CAPA Courses</option>
+
+                    <option value="Drama"
+                    {% if assignment.course == "Drama" %}selected{% endif %}>
+                        Drama
+                    </option>
+
+                    <option value="Entertainment"
+                    {% if assignment.course == "Entertainment" %}selected{% endif %}>
+                        Entertainment
+                    </option>
+
+                    <option value="Music Aural"
+                    {% if assignment.course == "Music Aural" %}selected{% endif %}>
+                        Music Aural
+                    </option>
+
+                    <option value="Photography"
+                    {% if assignment.course == "Photography" %}selected{% endif %}>
+                        Photography
+                    </option>
+
+                    <option value="Visual Arts"
+                    {% if assignment.course == "Visual Arts" %}selected{% endif %}>
+                        Visual Arts
+                    </option>
+
+
+                    <!-- PDHPE -->
+                    <option disabled>PDHPE Courses</option>
+
+                    <option value="CAFS"
+                    {% if assignment.course == "CAFS" %}selected{% endif %}>
+                        CAFS
+                    </option>
+
+                    <option value="Health & Movement Science"
+                    {% if assignment.course == "Health & Movement Science" %}selected{% endif %}>
+                        Health & Movement Science
+                    </option>
+
+                    <option value="SLR"
+                    {% if assignment.course == "SLR" %}selected{% endif %}>
+                        SLR
+                    </option>
+
+
+                    <!-- LANGUAGES -->
+                    <option disabled>Language Courses</option>
+
+                    <option value="German Beginners Dist Ed"
+                    {% if assignment.course == "German Beginners Dist Ed" %}selected{% endif %}>
+                        German Beginners Dist Ed
+                    </option>
+
+                    <option value="Japanese Continuers"
+                    {% if assignment.course == "Japanese Continuers" %}selected{% endif %}>
+                        Japanese Continuers
+                    </option>
+
+
+                    <!-- OTHER -->
+                    <option disabled>Other Courses</option>
+
+                    <option value="Work Studies"
+                    {% if assignment.course == "Work Studies" %}selected{% endif %}>
+                        Work Studies
+                    </option>
+
+                    <option value="Other"
+                    {% if assignment.course == "Other" %}selected{% endif %}>
+                        Other
+                    </option>
+
+                </select>
+                <br><br>
+            </div>
+
+            <!-- Assignment Notes -->
+            <label for="assignmentNotes">Assignment Notes:</label>
+            <div class="form-group">
+                <br>
+                <textarea id="assignmentNotes" name="assignmentNotes" maxlength="500">{{ assignment.notes or "" }}</textarea>
+                <div id="char-counter" class="subtitle">0 / 500</div>
+                <br><br>
+            </div>
+            
+            <!-- Due Time -->
+            <label for="due_time">Due Time:</label>
+            <div class="form-group">
+                <input type="time" id="due_time" name="due_time" value="{{ assignment.due_time.strftime('%H:%M') if assignment.due_time else '' }}">
+                <br><br>
+            </div>
+
+            <!-- Due Date -->
+            <label for="due_date">Due Date:</label>
+            <div class="form-group">
+                <input type="date" id="due_date" name="due_date" value="{{ assignment.due.strftime('%Y-%m-%d') }}">
+                <br><br>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save Changes">
+            </div>
+            
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+/* Assignment Notes Char Counter */
+function updateCounter() {
+    const textarea = document.getElementById("assignmentNotes");
+    const counter = document.getElementById("char-counter");
+    const max = textarea.maxLength;
+    const length = textarea.value.length;
+
+    counter.textContent = `${length} / ${max}`;
+    counter.style.color = length >= max ? "red" : "black";
+}
+
+document.getElementById("assignment-form").addEventListener("submit", function (e) {
+    const text = document.getElementById("assignmentNotes").value.trim();
+    if (text.length > 500) {
+        alert("Assignment notes must be at most 500 characters long.");
+        e.preventDefault();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", updateCounter);
+
+</script>
+{% endblock %}

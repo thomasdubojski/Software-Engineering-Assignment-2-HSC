@@ -56,7 +56,7 @@ function openModal(a) {
 
     document.getElementById("modalSubject").innerText = a.subject || "";
     document.getElementById("modalType").innerText = a.type || "";
-    document.getElementById("modalDue").innerText = formatDate(a.dueDate);
+    document.getElementById("modalDue").innerText = formatDate(a.dueTime ? `${a.dueDate}T${a.dueTime}`: a.dueDate);
 
     selectedAssignment = a;
 
@@ -78,7 +78,7 @@ function openModal(a) {
 document.getElementById("modalTitle").innerText = a.title || "";
 document.getElementById("modalSubject").innerText = a.subject || "";
 document.getElementById("modalType").innerText = a.type || "";
-document.getElementById("modalDue").innerText = formatDate(a.dueDate);
+document.getElementById("modalDue").innerText = formatDate(a.dueTime ? `${a.dueDate}T${a.dueTime}`: a.dueDate);
 
 const priorityEl = document.getElementById("modalPriority");
 
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <h3>${a.title}</h3>
 
             <p><strong>Subject:</strong> ${a.subject}</p>
-            <p><strong>Due:</strong> ${a.dueDate}</p>
+            <p><strong>Due:</strong> ${a.dueDate} ${a.dueTime || ""}</p>
 
             ${a.completed
                 ? `<span class="complete-bubble">${icon("check_circle")} COMPLETED</span>`
@@ -410,7 +410,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     type: e.type,
                     priority: e.priority,
                     notes: e.notes,
-                    overdue: e.overdue
+                    overdue: e.overdue,
+                    completed: e.completed
                 }
             };
         }),

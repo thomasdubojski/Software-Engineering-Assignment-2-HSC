@@ -68,7 +68,6 @@ class User(db.Model):
     verified = db.Column(db.Boolean, default=False)
     created = db.Column(db.Date, default=datetime.utcnow)
     wallpaper = db.Column(db.String(255), default="default.jpg")
-    wallpaper_opacity = db.Column(db.Float, default=0.4)
     dark_mode = db.Column(db.Boolean, default=False)
 
     assignments = db.relationship("Assignments", backref='student', lazy=True)
@@ -97,7 +96,7 @@ class WorkSession(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
     duration = db.Column(db.Integer, nullable=False)  # minutes
     category = db.Column(db.String(50))
-    notes = db.Column(db.Text)
+    notes = db.Column(db.Text(500))
     created = db.Column(db.DateTime, default=datetime.utcnow)
 
 

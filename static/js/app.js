@@ -21,6 +21,7 @@ function formatDate(dateValue) {
 }
 
 let selectedAssignment = null;
+let assignmentToDelete = null;
 
 /* Material symbol integration */
 function icon(name) {
@@ -222,19 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = `/edit-assignment/${a.id}`;
         });
 
-        card.querySelector(".delete-btn-card").addEventListener("click", async (e) => {
+        card.querySelector(".delete-btn-card").addEventListener("click", (e) => {
             e.stopPropagation();
 
-            const res = await fetch(`/delete-assignment/${a.id}`, {
-                method: "POST",
-                headers: {
-                "X-CSRFToken": csrfToken
-            }
-            });
+            assignmentToDelete = a.id;
 
-            const result = await res.json();
-
-            if (result.success) location.reload();
+            document.getElementById("deleteConfirmModal").classList.remove("hidden");
         });
 
             card.onclick = () => openModal(a);
@@ -261,27 +255,92 @@ document.addEventListener("DOMContentLoaded", () => {
     const historyBtn = document.getElementById("historyBtn");
     const logStudyBtn = document.getElementById("logStudyBtn");
     const deleteBtn = document.getElementById("deleteBtn");
+    const deleteModal = document.getElementById("deleteConfirmModal");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+    const deleteAccountBtn = document.getElementById("deleteAccountBtn");
+    const accountDeleteModal = document.getElementById("accountDeleteModal");
+    const cancelAccountDeleteBtn = document.getElementById("cancelAccountDeleteBtn");
+    const confirmAccountDeleteBtn = document.getElementById("confirmAccountDeleteBtn");
+    const deleteAccountForm = document.getElementById("deleteAccountForm");
+
+
+    if (deleteAccountBtn && accountDeleteModal) {
+
+        deleteAccountBtn.addEventListener("click", () => {
+            accountDeleteModal.classList.remove("hidden");
+        });
+
+    }
+
+
+    if (cancelAccountDeleteBtn) {
+
+        cancelAccountDeleteBtn.addEventListener("click", () => {
+            accountDeleteModal.classList.add("hidden");
+        });
+
+    }
+
+
+    if (confirmAccountDeleteBtn) {
+
+        confirmAccountDeleteBtn.addEventListener("click", () => {
+            deleteAccountForm.submit();
+        });
+
+    }
 
     if (deleteBtn) {
-        deleteBtn.addEventListener("click", async () => {
+        deleteBtn.addEventListener("click", () => {
+
             if (!selectedAssignment) return;
 
-            const confirmDelete = confirm("Delete this assignment?");
-            if (!confirmDelete) return;
+            assignmentToDelete = selectedAssignment.id;
 
-            const res = await fetch(`/delete-assignment/${selectedAssignment.id}`, {
-                method: "POST",
-                headers: {
-                "X-CSRFToken": csrfToken
+            document
+                .getElementById("deleteConfirmModal")
+                .classList.remove("hidden");
+
+        });
+    }
+
+
+    if (cancelDeleteBtn) {
+
+        cancelDeleteBtn.addEventListener("click", () => {
+
+            deleteModal.classList.add("hidden");
+
+        });
+
+    }
+
+
+    if (confirmDeleteBtn) {
+
+        confirmDeleteBtn.addEventListener("click", async () => {
+
+            const res = await fetch(
+                `/delete-assignment/${selectedAssignment.id}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    }
                 }
-            });
+            );
+
 
             const result = await res.json();
+
 
             if (result.success) {
                 location.reload();
             }
+
         });
+
     }
 
     if (logStudyBtn) {
@@ -531,3 +590,19 @@ if (sessionBtn) {
         window.location.href = sessionBtn.dataset.url;
     });
 }
+
+/* Flash message autoclose */
+document.querySelectorAll(".flash-messages li").forEach(message => {
+
+    setTimeout(() => {
+
+        message.style.opacity = "0";
+        message.style.transition = "opacity 0.3s ease";
+
+        setTimeout(() => {
+            message.remove();
+        }, 1000);
+
+    }, 3000);
+
+});

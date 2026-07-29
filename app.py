@@ -360,7 +360,7 @@ def delete_assignment(id):
     if 'user_id' not in session:
         return jsonify({"success": False}), 401
 
-    flash("Are you sure you want to delete this assignment? This action cannot be undone.", "warning")
+    flash("Assignment Successfully Deleted", "success")
 
     assignment = Assignments.query.filter_by(id=id, user_id=session["user_id"]).first_or_404()
 

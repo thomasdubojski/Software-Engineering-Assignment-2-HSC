@@ -116,11 +116,11 @@
 
         <p>Once deleted, your account cannot be recovered.</p>
 
-        <form action="/delete-account" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+        <form action="/delete-account" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <div class="form-group">
-            <button type="submit" class="btn btn-iconDelete"> Delete Account </button>
+            <button type="button" id="deleteAccountBtn" class="btn btn-iconDelete"> Delete Account </button>
         </div>
 
         </form>
@@ -158,5 +158,7 @@
     });
 
 </script>
+
+{% include "components/account-delete-modal.html" %}
 
 {% endblock %}

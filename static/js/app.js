@@ -313,8 +313,10 @@ document.addEventListener("DOMContentLoaded", () => {
         googleCalendarBtn.onclick = () => {
             if (!selectedAssignment) return;
 
-            window.location.href =
-                `/google-calendar/${selectedAssignment.id}`;
+            window.open(
+                `/google-calendar/${selectedAssignment.id}`,
+                "_blank"
+            );
         };
     }
 

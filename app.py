@@ -337,7 +337,7 @@ def calendar():
             "title": a.course,
             "subject": a.course,
             "type": a.type,
-            "start": (datetime.combine(a.due, a.due_time).isoformat()if a.due_time else a.due.strftime("%Y-%m-%d")),
+            "start": datetime.combine(a.due, a.due_time if a.due_time else datetime.min.time()).isoformat(),
             "priority": a.priority,
             "completed": a.completed,
             "notes": a.notes,

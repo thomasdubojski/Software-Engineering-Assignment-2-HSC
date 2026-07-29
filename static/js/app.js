@@ -356,9 +356,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let calendar = new FullCalendar.Calendar(calendarEl, {
 
+        timeZone: 'local',
+
         initialView: 'timeGridWeek',
 
-        slotMinTime: "06:00:00",
+        slotMinTime: "00:00:00",
         slotMaxTime: "23:00:00",
 
         scrollTime: "08:00:00",
@@ -383,8 +385,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     id: e.id,
                     title: "Study: " + e.assignment,
                     start: e.start,
+                    allDay: e.start.endsWith("T00:00:00"),
                     end: e.end,
-                    allDay: false,
 
                     extendedProps: {
                         eventType: "session",
@@ -399,6 +401,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: e.id,
                 title: e.title,
                 start: e.start,
+                allDay: false,
                 color: "#2f6fed",
 
                 extendedProps: {

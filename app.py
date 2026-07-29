@@ -127,6 +127,17 @@ def total_minutes(assignment):
 def total_hours(assignment):
     return round(total_minutes(assignment) / 60, 2)
 
+def format_time(minutes):
+    hours = minutes // 60
+    mins = minutes % 60
+
+    if hours > 0 and mins > 0:
+        return f"{hours}h {mins}m"
+    elif hours > 0:
+        return f"{hours}h"
+    else:
+        return f"{mins}m"
+
 
 #-------------------
 # Core app functions
@@ -462,11 +473,28 @@ def study_statistics():
 
     assignments = Assignments.query.filter_by(user_id=session["user_id"]).all()
 
-    total = sum(total_minutes(a) for a in assignments)
+    total_study_minutes = sum(total_minutes(a) for a in assignments)
+    average_daily_minutes = total_study_minutes // 7
+
     sessions = sum(len(a.work_sessions) for a in assignments)
     completed = sum(1 for a in assignments if a.completed)
 
-    return render_template("study-statistics.html", assignments=assignments, total_hours=round(total / 60, 2), total_sessions=sessions, completed_assignments=completed)
+    assignment_times = {}
+
+    for a in assignments:
+        assignment_times[a.id] = format_time(total_minutes(a))
+
+    return render_template(
+        "study-statistics.html",
+        assignments=assignments,
+        total_hours=round(total_study_minutes / 60, 2),
+        total_time=format_time(total_study_minutes),
+        total_minutes=total_study_minutes,
+        total_sessions=sessions,
+        completed_assignments=completed,
+        assignment_times=assignment_times,
+        average_daily_time=format_time(average_daily_minutes)
+    )
 
 # Show log work function and template loading
 @app.route("/log-work/<int:assignment_id>", methods=["GET"])

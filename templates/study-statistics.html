@@ -7,23 +7,24 @@
 <div class="stats-grid">
 
     <div class="stat-card">
-        <h2>{{ total_hours }}</h2>
-        <p>Total Hours Studied</p>
+        <p>Total Time Studied</p>
+        <h2>{{ total_time }}</h2><br>        
     </div>
 
     <div class="stat-card">
-        <h2>{{ total_sessions }}</h2>
         <p>Total Sessions</p>
+        <h2>{{ total_sessions }}</h2><br>
     </div>
 
     <div class="stat-card">
-        <h2>{{ (total_hours / 7)|round(2) }}</h2>
-        <p>Avg Hours / Day</p>
+        <p>Average time studied per day this week</p>
+        <h2>{{ average_daily_time }}</h2><br>
+        
     </div>
 
     <div class="stats-card">
-        <h2>{{ completed_assignments }}</h2>
         <p>Completed Assignments</p>
+        <h2>{{ completed_assignments }}</h2><br>
     </div>
 
 </div>
@@ -41,8 +42,7 @@
         <h3>{{ a.course }}</h3>
 
         <p>
-            {{ (a.work_sessions | sum(attribute='duration') / 60) | round(2) }}
-            hours
+            {{ assignment_times[a.id] }}
         </p>
 
         <p>
@@ -68,7 +68,7 @@
     <li>
         Average session length:
         {% if total_sessions > 0 %}
-    {{ (total_hours * 60 / total_sessions) | round(1) }} min
+    {{ (total_minutes // total_sessions) if total_sessions > 0 else 0 }} min
     {% else %}
         0 min
     {% endif %}
